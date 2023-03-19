@@ -91,7 +91,7 @@ int main(void)
 // 		int gcd = (width, height); //get the greatest common divisor of something, TLDR magic
 // 		std::cout << ((float)width / (float)gcd) << " this and this " << ((float)height / (float)gcd) << std::endl;
 // 		glm::mat4 proj = glm::ortho(-((float)width / (float)gcd), (float)width / (float)gcd, -((float)height / (float)gcd), (float)height / (float)gcd, -1.0f, 1.0f); //make orthographic projection matrix with aspect ratio of window, TLDR more magic oh and also some culling
-		glm::mat4 proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height, -1.0f, 1.0f); 
+		glm::mat4 proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height, -1000.0f, 1000.0f); 
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); //camera
 
 		Shader shader("res/shaders/Basic");
@@ -114,8 +114,10 @@ int main(void)
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		ImGui::StyleColorsDark();
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init((char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
-		//ImGui_ImplOpenGL3_Init("#version 460");
+		//std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION);
+		//ImGui_ImplOpenGL3_Init((char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+		const char* glsl_version = "#version 460";
+		ImGui_ImplOpenGL3_Init(glsl_version);
 
 		glm::vec3 translationA(200, 200, 0);
 		glm::vec3 translationB(400, 200, 0);

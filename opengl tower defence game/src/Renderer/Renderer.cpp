@@ -20,6 +20,7 @@ bool GLLogCall(const char* function, const char* file, int line) //old error han
 
 void Renderer::Clear() const
 {
+	//clears the window
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 

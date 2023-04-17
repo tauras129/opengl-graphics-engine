@@ -9,19 +9,21 @@ void GLClearError() //old error handling
 
 bool GLLogCall(const char* function, const char* file, int line) //old error handling
 {
+	bool errorFound = false;
 	while (GLenum error = glGetError())
 	{
 		//print out error
 		std::cout << "[OpenGL Error] (" << error << "):" << function << " " << file << ": " << line << std::endl;
-		return false;
+		errorFound = true;
 	}
+	if (errorFound) return false;
 	return true;
 }
 
 void Renderer::Clear() const
 {
 	//clears the window
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const

@@ -5,12 +5,12 @@
 class Texture
 {
 private:
-	unsigned int m_RendererID;
+	unsigned int m_RendererID = 0;
 	std::string m_FilePath;
-	unsigned char* m_LocalBuffer;
-	int m_Width, m_Height, m_BPP; // bytes per pixel
+	unsigned char* m_LocalBuffer = nullptr;
+	int m_Width = 0, m_Height = 0, m_BPP = 0; // bytes per pixel
 public:
-	Texture(const std::string& path);
+	explicit Texture(const std::string& path);
 	~Texture();
 
 	void Bind(unsigned int slot = 0) const;

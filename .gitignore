@@ -361,4 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-dependencies/WIN64/lib-assimp/assimp-vc143-mtd.lib

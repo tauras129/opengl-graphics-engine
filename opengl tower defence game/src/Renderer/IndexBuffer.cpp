@@ -1,6 +1,6 @@
 #include "IndexBuffer.h"
 
-#include "../Renderer.h"
+#include "Renderer.h"
 
 IndexBuffer::IndexBuffer(const std::vector<unsigned int>& data, unsigned int count)
 	:m_Count(count)

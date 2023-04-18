@@ -1,9 +1,9 @@
 #pragma once
 
 #include <GL/glew.h>
-#include "Renderer/VertexArray.h"
-#include "Renderer/IndexBuffer.h"
-#include "Renderer/Shader.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 #include <iostream>
 #include <array>
 
@@ -65,6 +65,7 @@ class Renderer
 {
 public:
 	void Clear() const;
+	void Clear(float red, float green, float blue, float alpha) const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
 
 private:

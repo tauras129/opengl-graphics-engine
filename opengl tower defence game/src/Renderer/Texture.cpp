@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include "../Vendor/stb_image.h"
 #include <iostream>
+#include "Renderer.h"
 
 Texture::Texture(const std::string& path)
 	: m_FilePath(path)

@@ -15,7 +15,7 @@
 #include <numeric>
 #include <array>
 
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/VertexArray.h"
@@ -177,7 +177,7 @@ int main(void)
 		{
 
 			/* Render here */
-			renderer.Clear();
+			renderer.Clear(0.2f, 0.3f, 0.8f, 1.0f);
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
@@ -237,15 +237,15 @@ int main(void)
 			};*/
 			vb.Bind();
 			//std::cout << (sizeof(cube.vertices[0]) * cube.vertices.size()) << " is the size of vertices" << std::endl;
-			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(cube.vertices[0]) * cube.vertices.size()), &cube.vertices[0]);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(cube.vertices[0]) * cube.vertices.size()), cube.vertices.data());
 
 			glm::mat4 model = glm::mat4(1);
 			camera1.SetPosition(translationA);
 			camera1.SetRotation(rotationA);
 			shader.Bind();
-			shader.setUniformMat4f("u_Model", model); //give shader the model matrix
+			shader.setUniformMat4f("u_Model", model);				   //give shader the model matrix
 			shader.setUniformMat4f("u_View", camera1.GetViewMatrix()); //give shader the view matrix
-			shader.setUniformMat4f("u_Proj", proj); //give shader the projection matrix
+			shader.setUniformMat4f("u_Proj", proj);					   //give shader the projection matrix
 			renderer.Draw(va, ib, shader);
 
 			ImGui::ShowUserGuide();

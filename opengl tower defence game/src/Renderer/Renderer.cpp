@@ -1,4 +1,4 @@
-#include "../Renderer.h"
+#include "Renderer.h"
 
 #include <iostream>
 
@@ -7,12 +7,12 @@ void GLClearError() //old error handling
 	while (glGetError() != GL_NO_ERROR);
 }
 
-bool GLLogCall(const char* function, const char* file, int line) //old error handling
+bool GLLogCall(const char* function, const char* file, int line) // old error handling
 {
 	bool errorFound = false;
 	while (GLenum error = glGetError())
 	{
-		//print out error
+		// print out error
 		std::cout << "[OpenGL Error] (" << error << "):" << function << " " << file << ": " << line << std::endl;
 		errorFound = true;
 	}
@@ -22,7 +22,24 @@ bool GLLogCall(const char* function, const char* file, int line) //old error han
 
 void Renderer::Clear() const
 {
-	//clears the window
+	// clears the window
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::Clear(float red, float green, float blue, float alpha) const
+{
+	// clears the window with a color
+
+	// check if the color values are lower that 0 or higher than 1, if they are warn the user
+	if (red > 1) std::cout << "--WARNING-- red value " << red << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (red < 0) std::cout << "--WARNING-- red value " << red << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
+	if (green > 1) std::cout << "--WARNING-- green value " << green << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (green < 0) std::cout << "--WARNING-- green value " << green << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
+	if (blue > 1) std::cout << "--WARNING-- blue value " << blue << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (blue < 0) std::cout << "--WARNING-- blue value " << blue << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
+	if (alpha > 1) std::cout << "--WARNING-- alpha value " << alpha << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (alpha < 0) std::cout << "--WARNING-- alpha value " << alpha << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
+	glClearColor(red, green, blue, alpha);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

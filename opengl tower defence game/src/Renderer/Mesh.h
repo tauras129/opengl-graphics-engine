@@ -20,7 +20,7 @@ public:
 	std::vector<unsigned int, std::allocator<unsigned int>> indices;
 
 	void loadModel(const std::string& path/*, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices*/ );
-	void processNode(aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 

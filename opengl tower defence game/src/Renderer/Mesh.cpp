@@ -44,7 +44,7 @@ void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, s
 	Mesh::cachedModels.insert(std::make_pair(path, std::make_pair(vertices, indices)));
 }
 
-void Mesh::processNode(aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+void Mesh::processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	// Process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
@@ -77,7 +77,7 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 		//std::cout << "vertex" << std::endl;
 
 		vertices.push_back(vertex);
-		std::cout << vertices[i].TexCoords.x << ", " << vertices[i].TexCoords.y << std::endl;
+		//std::cout << vertices[i].TexCoords.x << ", " << vertices[i].TexCoords.y << std::endl; // print out texture coordinates
 	}
 
 	// Check if the mesh has indices

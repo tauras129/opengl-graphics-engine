@@ -8,9 +8,14 @@
 #include <sstream>
 
 Shader::Shader(const std::string& filepath)
-	: m_Filepath(filepath), m_RendererID(0)
 {
 	ShaderProgramSource source = ParseShaderFiles(filepath);
+	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
+}
+
+Shader::Shader(const std::string& filepathVertex, const std::string& filepathFragment)
+{
+	ShaderProgramSource source = ParseShaderFiles(filepathVertex, filepathFragment);
 	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
 }
 
@@ -34,6 +39,50 @@ ShaderProgramSource Shader::ParseShaderFiles(const std::string& filepath)
 	{
 		//failed to load fragment shader file
 		std::cout << "failed to load fragment shader from filepath " << filepath << ".frag" << std::endl;
+		__debugbreak();
+	}
+
+	enum class ShaderType
+	{
+		NONE = -1, VERTEX = 0, FRAGMENT = 1
+	};
+
+	std::string line;
+	std::stringstream ss[2];
+
+	//vertex
+	ShaderType type = ShaderType::VERTEX;
+	while (getline(vertStream, line))
+	{
+		ss[(int)type] << line << "\n";
+	}
+	//fragment
+	type = ShaderType::FRAGMENT;
+	while (getline(fragStream, line))
+	{
+		ss[(int)type] << line << "\n";
+	}
+
+	return {
+		ss[0].str(), ss[1].str()
+	};
+}
+
+ShaderProgramSource Shader::ParseShaderFiles(const std::string& filepathVertex, const std::string& filepathFragment)
+{
+	std::ifstream vertStream(filepathVertex);
+	std::ifstream fragStream(filepathFragment);
+
+	if (vertStream.fail())
+	{
+		//failed to load vertex shader file
+		std::cout << "failed to load vertex shader from filepath " << filepathVertex << std::endl;
+		__debugbreak();
+	}
+	if (fragStream.fail())
+	{
+		//failed to load fragment shader file
+		std::cout << "failed to load fragment shader from filepath " << filepathFragment << std::endl;
 		__debugbreak();
 	}
 
@@ -130,7 +179,7 @@ void Shader::SetUniform1i(const std::string& name, int value)
 	glUniform1i(GetUniformLocation(name), value);
 }
 
-void Shader::SetUniform1iv(const std::string& name, int value[], int size)
+void Shader::SetUniform1iv(const std::string& name, const int value[], int size)
 {
 	glUniform1iv(GetUniformLocation(name), size, value);
 }

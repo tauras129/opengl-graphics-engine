@@ -48,8 +48,7 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
-
-	GLCall(GLenum err = glewInit())
+	GLenum err = glewInit();
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GLMessageCallback, nullptr);
@@ -73,55 +72,14 @@ int main(void)
 		float near = 0.1f; // near clipping plane
 		float far = 1000.0f; // far clipping plane
 
-		// generate indices
-		/*unsigned int indices[] = {
-			// Front face
-			0, 1, 2,
-			2, 3, 0,
-
-			// Back face
-			4, 5, 6,
-			6, 7, 4,
-
-			// Top face
-			8, 9, 10,
-			10, 11, 8,
-
-			// Bottom face
-			12, 13, 14,
-			14, 15, 12,
-
-			// Right face
-			16, 17, 18,
-			18, 19, 16,
-
-			// Left face
-			20, 21, 22,
-			22, 23, 20
-		};*/
 		Mesh cube;
 		cube.loadModel("res/models/teapot.obj");
-		/*unsigned int indices[MaxIndexCount];
-		unsigned int offset = 0;
-		for (int i = 0; i < MaxIndexCount; i += 6)
-		{
-			indices[i + 0] = 0 + offset;
-			indices[i + 1] = 1 + offset;
-			indices[i + 2] = 2 + offset;
-
-			indices[i + 3] = 2 + offset;
-			indices[i + 4] = 3 + offset;
-			indices[i + 5] = 0 + offset;
-			offset += 4;
-		}*/
 
 		// transparency
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 		// depth test
 		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		VertexArray va;
 		VertexBuffer vb(nullptr, sizeof(Vertex) * MaxVertexCount);// the array/nullptr, max size of the buffer(size of a vertex, max amount of vertices(how much vram to allocate)), OPTIONAL: type(for example: GL_DYNAMIC_DRAW is default)
@@ -133,17 +91,11 @@ int main(void)
 		va.AddBuffer(vb, layout);
 
 		IndexBuffer ib(cube.indices, MaxIndexCount);
-// 		std::cout << ((float)width / (float)gcd) << " this and this " << ((float)height / (float)gcd) << std::endl;
-// 		glm::mat4 proj = glm::ortho(-((float)width / (float)gcd), (float)width / (float)gcd, -((float)height / (float)gcd), (float)height / (float)gcd, -1.0f, 1.0f); //make orthographic projection matrix with aspect ratio of window, TLDR more magic oh and also some culling
 		glm::mat4 proj = glm::perspective(fov, aspectRatio, near, far);
-		//glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		//glm::mat4 proj = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 1000.0f);
-		//glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); //camera
 		Camera camera1;
 
 		Shader shader("res/shaders/Basic");
 		shader.Bind();
-		//shader.SetUniform4f("u_Color", 0.3f, 0.0f, 0.8f, 1.0f);
 
 		Texture texture1("res/textures/prototype.png");
 		Texture texture2("res/textures/prototype1.png");
@@ -181,81 +133,27 @@ int main(void)
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
+			ImGui::Begin("Configuration", (bool*)true);
 
-			//setup vertex buffer
-			/*auto q0 = mesh::CreateQuad(translationA.x, translationA.y, sizeA, 0);
-			auto q1 = mesh::CreateQuad(translationB.x, translationB.y, sizeB, 1);
-			mesh::Vertex vertices[8];
-			for (int i = 0; i < sizeof(vertices)/sizeof(vertices[0]); i++)
-			{
-				if (i < 4)
-				{
-					vertices[i] = q1[i];
-				}
-				else
-				{
-					vertices[i] = q0[i - 4];
-				}
-			}*/
-			// Define the vertices for a cube
-			/*mesh::Vertex vertices[] = {
-				// Front face
-				{ glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f), 0 },
-				{ glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f), 0 },
-
-				// Back face
-				{ glm::vec3(0.5f, -0.5f, -0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), 0 },
-				{ glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), 0 },
-				{ glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f), 0 },
-				{ glm::vec3(0.5f,  0.5f, -0.5f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f), 0 },
-
-				// Top face
-				{ glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f,  0.5f, -0.5f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f), 0 },
-				{ glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), glm::vec2(0.0f, 1.0f), 0 },
-
-				// Bottom face
-				{ glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f, -0.5f, -0.5f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), glm::vec2(1.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f, -0.5f,  0.5f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f), 0 },
-				{ glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f), 0 },
-
-				// Right face
-				{ glm::vec3(0.5f, -0.5f, -0.5f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f,  0.5f, -0.5f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f), 0 },
-				{ glm::vec3(0.5f,  0.5f,  0.5f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), glm::vec2(1.0f, 1.0f), 0 },
-				{ glm::vec3(0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f), 0 },
-
-				// Left face
-				{ glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), 0 },
-				{ glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f), 0 },
-				{ glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f), 0 },
-				{ glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f), 0 }
-			};*/
 			vb.Bind();
-			//std::cout << (sizeof(cube.vertices[0]) * cube.vertices.size()) << " is the size of vertices" << std::endl;
 			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(cube.vertices[0]) * cube.vertices.size()), cube.vertices.data());
 
 			glm::mat4 model = glm::mat4(1);
 			camera1.SetPosition(translationA);
 			camera1.SetRotation(rotationA);
 			shader.Bind();
-			shader.setUniformMat4f("u_Model", model);				   //give shader the model matrix
-			shader.setUniformMat4f("u_View", camera1.GetViewMatrix()); //give shader the view matrix
-			shader.setUniformMat4f("u_Proj", proj);					   //give shader the projection matrix
+			shader.setUniformMat4f("u_Model", model);					// give shader the model matrix
+			shader.setUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
+			shader.setUniformMat4f("u_Proj", proj);						// give shader the projection matrix
 			renderer.Draw(va, ib, shader);
 
-			ImGui::ShowUserGuide();
-			//ImGui::ShowAboutWindow();
-			ImGui::DragFloat3("Camera Position", &translationA.x, 1.0f); // Camera Position
-			ImGui::DragFloat3("Camera Rotation", &rotationA.x, 0.1f);	 // Camera Rotation
-			if (ImGui::Button("Exit"))									 // Exit Button
+			ImGui::DragFloat3("Camera Position", &translationA.x, 1.0f);// Camera Position
+			ImGui::DragFloat3("Camera Rotation", &rotationA.x, 0.1f);	// Camera Rotation
+			if (ImGui::Button("Exit"))									// Exit Button
 				break;
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
+			ImGui::End();
 			ImGui::EndFrame();
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

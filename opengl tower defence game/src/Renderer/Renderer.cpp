@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void GLClearError() //old error handling
+void GLClearError() // old error handling
 {
 	while (glGetError() != GL_NO_ERROR);
 }
@@ -31,13 +31,13 @@ void Renderer::Clear(float red, float green, float blue, float alpha) const
 	// clears the window with a color
 
 	// check if the color values are lower that 0 or higher than 1, if they are warn the user
-	if (red > 1) std::cout << "--WARNING-- red value " << red << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (red > 1) std::cout << "--WARNING-- red value " << red << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1? If you are then divide it by 255, Good luck!" << std::endl;
 	if (red < 0) std::cout << "--WARNING-- red value " << red << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
-	if (green > 1) std::cout << "--WARNING-- green value " << green << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (green > 1) std::cout << "--WARNING-- green value " << green << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1? If you are then divide it by 255, Good luck!" << std::endl;
 	if (green < 0) std::cout << "--WARNING-- green value " << green << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
-	if (blue > 1) std::cout << "--WARNING-- blue value " << blue << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (blue > 1) std::cout << "--WARNING-- blue value " << blue << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1? If you are then divide it by 255, Good luck!" << std::endl;
 	if (blue < 0) std::cout << "--WARNING-- blue value " << blue << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
-	if (alpha > 1) std::cout << "--WARNING-- alpha value " << alpha << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1?" << std::endl;
+	if (alpha > 1) std::cout << "--WARNING-- alpha value " << alpha << " for renderer clear is higher that 1. are you using 0-255 instead of 0-1? If you are then divide it by 255, Good luck!" << std::endl;
 	if (alpha < 0) std::cout << "--WARNING-- alpha value " << alpha << " for renderer clear is lower that 0. Good luck fixing this issue!" << std::endl;
 	glClearColor(red, green, blue, alpha);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -51,7 +51,7 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 
 	glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 
-	//unbind stuff OPTIONAL, if performance is bad remove this
+	// unbind stuff OPTIONAL, if performance is bad remove this
 	shader.Unbind();
 	va.Unbind();
 	ib.Unbind();

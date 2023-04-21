@@ -146,7 +146,21 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
 	glAttachShader(program, vs);
 	glAttachShader(program, fs);
 	glLinkProgram(program);
+
+	int result;
+	glGetProgramiv(program, GL_LINK_STATUS, &result);
 	glValidateProgram(program);
+	if (result == GL_FALSE)
+	{
+		int length;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)malloc(sizeof(512));
+		glGetProgramInfoLog(program, 512, nullptr, message);
+		std::cout << "Failed to link shaders!" << std::endl;
+		std::cout << message << std::endl;
+		glDeleteProgram(program);
+		return 0;
+	}
 
 	glDeleteShader(vs);
 	glDeleteShader(fs);

@@ -87,7 +87,7 @@ int main(void)
 		layout.Push<float>(3); //how many dimensions the thing is
 		layout.Push<float>(3); //normal
 		layout.Push<float>(2); //texture coordinates
-		//layout.Push<float>(1); //texture ID
+		layout.Push<unsigned int>(1); //texture ID
 		va.AddBuffer(vb, layout);
 
 		IndexBuffer ib(cube.indices, MaxIndexCount);
@@ -123,6 +123,7 @@ int main(void)
 		// setup variables for gui
 		glm::vec3 translationA(0, 0, 0);
 		glm::vec3 rotationA(0, 0, 0);
+		int texID = 0;
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -135,6 +136,7 @@ int main(void)
 			ImGui::NewFrame();
 			ImGui::Begin("Configuration", (bool*)true);
 
+			cube.setTextureID(texID);
 			vb.Bind();
 			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(cube.vertices[0]) * cube.vertices.size()), cube.vertices.data());
 
@@ -149,6 +151,7 @@ int main(void)
 
 			ImGui::DragFloat3("Camera Position", &translationA.x, 1.0f);// Camera Position
 			ImGui::DragFloat3("Camera Rotation", &rotationA.x, 0.1f);	// Camera Rotation
+			ImGui::SliderInt("Object Texture", &texID, 0, 1);			// Object Texture ID
 			if (ImGui::Button("Exit"))									// Exit Button
 				break;
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);

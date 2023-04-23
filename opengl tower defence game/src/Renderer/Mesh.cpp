@@ -44,7 +44,7 @@ void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, s
 	Mesh::cachedModels.insert(std::make_pair(path, std::make_pair(vertices, indices)));
 }
 
-void Mesh::processNode(aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+void Mesh::processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	// Process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
@@ -73,11 +73,12 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 		vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		vertex.Normal = mesh->HasNormals() ? glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z) : glm::vec3(0, 0, 0);
 		vertex.TexCoords = mesh->HasTextureCoords(0) ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0, 0);
+		vertex.TexID = 1;
 
 		//std::cout << "vertex" << std::endl;
 
 		vertices.push_back(vertex);
-		std::cout << vertices[i].TexCoords.x << ", " << vertices[i].TexCoords.y << std::endl;
+		//std::cout << vertices[i].TexCoords.x << ", " << vertices[i].TexCoords.y << std::endl; // print out texture coordinates
 	}
 
 	// Check if the mesh has indices
@@ -100,4 +101,11 @@ void Mesh::appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector
 {
 	vertices.insert(vertices.end(), this->vertices.begin(), this->vertices.end());
 	indices.insert(indices.end(), this->indices.begin(), this->indices.end());
+}
+
+void Mesh::setTextureID(int id)
+{
+	for (auto& vertex : vertices) {
+		vertex.TexID = id;
+	}
 }

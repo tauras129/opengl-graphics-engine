@@ -66,8 +66,8 @@ int main(void)
 	{
 
 		const int MaxQuadCount = 1;
-		const int MaxVertexCount = MaxQuadCount * 2976;
-		const int MaxIndexCount = MaxQuadCount * 6 * 6000;
+		const int MaxVertexCount = MaxQuadCount * 2976;//2976
+		const int MaxIndexCount = MaxQuadCount * 6 * 6000;// 6 * 6000
 		const float aspectRatio = (float)width / (float)height; // replace with your window's aspect ratio
 		constexpr float fov = glm::radians(90.0f); // field of view in radians
 		float near = 0.1f; // near clipping plane

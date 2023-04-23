@@ -12,10 +12,10 @@ Texture::Texture(const std::string& path)
 	glGenTextures(1, &m_RendererID);
 	glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//REQUIRED | how to downscale the texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//REQUIRED | how to upscale the texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	//REQUIRED | how to wrap the texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	//REQUIRED | how to wrap the texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// REQUIRED | how to downscale the texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// REQUIRED | how to upscale the texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// REQUIRED | how to wrap the texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// REQUIRED | how to wrap the texture
 
 	if (m_LocalBuffer)
 	{

@@ -154,4 +154,7 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="res\models\teapot.obj" />
+  </ItemGroup>
 </Project>

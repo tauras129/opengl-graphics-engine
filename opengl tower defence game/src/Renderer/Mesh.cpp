@@ -73,7 +73,7 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 		vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		vertex.Normal = mesh->HasNormals() ? glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z) : glm::vec3(0, 0, 0);
 		vertex.TexCoords = mesh->HasTextureCoords(0) ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0, 0);
-		vertex.TexID = 0;
+		vertex.TexID = 1;
 
 		//std::cout << "vertex" << std::endl;
 
@@ -105,7 +105,7 @@ void Mesh::appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector
 
 void Mesh::setTextureID(int id)
 {
-	for (auto vertex : vertices) {
+	for (auto& vertex : vertices) {
 		vertex.TexID = id;
 	}
 }

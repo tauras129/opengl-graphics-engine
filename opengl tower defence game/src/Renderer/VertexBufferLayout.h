@@ -57,7 +57,7 @@ public:
 	void Push<int>(unsigned int count)
 	{
 		m_Elements.push_back({ GL_INT, count, GL_FALSE });
-		m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_INT);
+		m_Stride += count * VertexBufferElement::GetSizeOfType(GL_INT);
 	}
 
 	template<>

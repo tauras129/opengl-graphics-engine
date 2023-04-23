@@ -42,19 +42,23 @@ glm::quat Camera::GetRotation()
 
 void Camera::GlobalMove(glm::vec3 translation)
 {
+
 	this->translation += translation;
 	glm::mat4 r = glm::mat4_cast(rotation);
 	glm::mat4 t = glm::translate(glm::mat4(1.f), this->translation);
 	glm::mat4 s = glm::scale(glm::mat4(1.f), scale);
 	view = glm::affineInverse(t * r * s);
+
 }
 void Camera::LocalMove(glm::vec3 translation)
 {
+
 	this->translation += rotation * translation;
 	glm::mat4 r = glm::mat4_cast(rotation);
 	glm::mat4 t = glm::translate(glm::mat4(1.f), this->translation);
 	glm::mat4 s = glm::scale(glm::mat4(1.f), scale);
 	view = glm::affineInverse(t * r * s);
+
 }
 
 void Camera::Rotate(glm::quat rotation)
@@ -76,7 +80,6 @@ void Camera::SetPosition(glm::vec3 translation)
 	glm::mat4 s = glm::scale(glm::mat4(1.f), scale);
 	view = glm::affineInverse(t * r * s);
 
-
 }
 
 void Camera::SetRotation(glm::quat rotation)
@@ -87,7 +90,6 @@ void Camera::SetRotation(glm::quat rotation)
 	glm::mat4 t = glm::translate(glm::mat4(1.f), translation);
 	glm::mat4 s = glm::scale(glm::mat4(1.f), scale);
 	view = glm::affineInverse(t * r * s);
-
 
 }
 

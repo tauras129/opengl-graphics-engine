@@ -26,6 +26,7 @@ void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, s
 
 	// Check if there was an error while loading the file
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+		std::cout << "Model loading error: " + std::string(importer.GetErrorString()) + " trying to load model: " + path;
 		throw std::runtime_error("Model loading error: " + std::string(importer.GetErrorString()) + " trying to load model: " + path);
 	}
 

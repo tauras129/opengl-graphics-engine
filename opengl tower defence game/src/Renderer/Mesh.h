@@ -10,6 +10,7 @@ struct Vertex {
 	glm::vec3 Position;
 	glm::vec3 Normal;
 	glm::vec2 TexCoords;
+	int TexID;
 };
 
 class Mesh
@@ -20,9 +21,10 @@ public:
 	std::vector<unsigned int, std::allocator<unsigned int>> indices;
 
 	void loadModel(const std::string& path/*, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices*/ );
-	void processNode(aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void setTextureID(int id);
 
 private:
 	static std::map<std::string, std::pair<std::vector<Vertex>, std::vector<unsigned int>>> cachedModels;

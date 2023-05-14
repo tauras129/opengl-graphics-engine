@@ -2,7 +2,7 @@
 
 layout(location = 0) out vec4 color;
 
-uniform sampler2D u_Textures[2];
+uniform sampler2D u_Textures[4];
 
 in vec2 v_TexCoord;
 flat in int v_TexIndex;

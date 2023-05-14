@@ -65,15 +65,15 @@ int main(void)
 	{
 
 		const int MaxQuadCount = 1;
-		const int MaxVertexCount = MaxQuadCount * 2976;//2976
-		const int MaxIndexCount = MaxQuadCount * 6 * 6000;// 6 * 6000
+		const int MaxVertexCount = MaxQuadCount * 10000000;//2976
+		const int MaxIndexCount = MaxQuadCount * 196890;// 196890
 		const float aspectRatio = (float)width / (float)height; // replace with your window's aspect ratio
 		constexpr float fov = glm::radians(90.0f); // field of view in radians
 		float near = 0.1f; // near clipping plane
 		float far = 1000.0f; // far clipping plane
 
 		Mesh cube;
-		cube.loadModel("res/models/teapot.obj");
+		cube.loadModel("res/models/bunny/bunny.obj"); // "res/models/bunny/bunny.obj"
 
 		// transparency
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -99,10 +99,14 @@ int main(void)
 
 		Texture texture1("res/textures/prototype.png");
 		Texture texture2("res/textures/prototype1.png");
+		Texture texture3("res/models/bunny/texture_standard.jpg");
+		Texture texture4("res/models/bunny/texture_ceramic.jpg");
 		texture1.Bind(0);
 		texture2.Bind(1);
-		int textures[2] = { 0, 1 };
-		shader.SetUniform1iv("u_Textures", textures, 2);
+		texture3.Bind(2);
+		texture4.Bind(3);
+		int textures[4] = { 0, 1, 2, 3 };
+		shader.SetUniform1iv("u_Textures", textures, 4);
 
 		va.Unbind();
 		shader.Unbind();
@@ -123,7 +127,15 @@ int main(void)
 		// setup variables for gui
 		glm::vec3 translationA(0, 0, 0);
 		glm::vec3 rotationA(0, 0, 0);
+		glm::vec3 scaleA(1, 1, 1);
+
+		glm::vec3 translationB(0, 0, 0);
+		glm::vec3 rotationB(0, 0, 0);
+		glm::vec3 scaleB(1, 1, 1);
 		int texID = 0;
+		float moveSpeed = 1.0f;
+		float rotateSpeed = 0.1f;
+		float scaleSpeed = 0.25f;
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -138,20 +150,38 @@ int main(void)
 
 			cube.setTextureID(texID);
 			vb.Bind();
-			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(cube.vertices[0]) * cube.vertices.size()), cube.vertices.data());
+
+			cube.SetPosition(translationB);
+			cube.SetRotation(rotationB);
+			cube.SetScale(scaleB);
+			std::vector<Vertex> vertices = cube.getVertices();
+			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(vertices[0]) * vertices.size()), vertices.data());
 
 			glm::mat4 model = glm::mat4(1);
 			camera1.SetPosition(translationA);
 			camera1.SetRotation(rotationA);
+			camera1.SetScale(scaleA);
 			shader.Bind();
 			shader.setUniformMat4f("u_Model", model);					// give shader the model matrix
 			shader.setUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
 			shader.setUniformMat4f("u_Proj", proj);						// give shader the projection matrix
 			renderer.Draw(va, ib, shader);
 
-			ImGui::DragFloat3("Camera Position", &translationA.x, 1.0f);// Camera Position
-			ImGui::DragFloat3("Camera Rotation", &rotationA.x, 0.1f);	// Camera Rotation
-			ImGui::SliderInt("Object Texture", &texID, 0, 1);			// Object Texture ID
+			ImGui::Text("Sliders");
+			ImGui::DragFloat("Movement Speed", &moveSpeed, 0.01f, 0.01f, 100.0f);	// Movement Speed
+			ImGui::DragFloat("Rotation Speed", &rotateSpeed, 0.01f, 0.01f, 10.0f);  // Rotation Speed
+			ImGui::DragFloat("Scale Speed", &scaleSpeed, 0.01f, 0.01f, 10.0f);		// Scale Speed
+
+			ImGui::Text("Camera");
+			ImGui::DragFloat3("Position", &translationA.x, moveSpeed);	// Camera Position
+			ImGui::DragFloat3("Rotation", &rotationA.x, rotateSpeed);	// Camera Rotation
+			ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
+
+			ImGui::Text("Object");
+			ImGui::DragFloat3("Position2", &translationB.x, moveSpeed);	// Camera Position
+			ImGui::DragFloat3("Rotation2", &rotationB.x, rotateSpeed);	// Camera Rotation
+			ImGui::DragFloat3("Scale(broken?)", &scaleB.x, scaleSpeed);	// Camera Scale
+			ImGui::SliderInt("Texture", &texID, 0, 3);					// Object Texture ID
 			if (ImGui::Button("Exit"))									// Exit Button
 				break;
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);

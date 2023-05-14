@@ -98,6 +98,65 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 	}
 }
 
+std::vector<Vertex> Mesh::getVertices()
+{
+	applyTransformations();
+	return std::vector<Vertex>();
+}
+
+std::vector<unsigned int, std::allocator<unsigned int>> Mesh::getIndices()
+{
+	return this->indices;
+}
+
+void Mesh::appendToVerices(std::vector<Vertex>& vertices)
+{
+	vertices.insert(vertices.end(), this->vertices.begin(), this->vertices.end());
+}
+
+void Mesh::appendToIndices(std::vector<unsigned int, std::allocator<unsigned int>>& indices)
+{
+	indices.insert(indices.end(), this->indices.begin(), this->indices.end());
+}
+
+void Mesh::GlobalMove(glm::vec3 translation)
+{
+	this->translation += translation;
+}
+
+void Mesh::LocalMove(glm::vec3 translation)
+{
+	this->translation += rotation*translation;
+}
+
+void Mesh::Rotate(glm::quat rotation)
+{
+	this->rotation *= rotation;
+}
+
+void Mesh::Scale(glm::vec3 scale)
+{
+	this->scale *= scale;
+}
+
+void Mesh::SetPosition(glm::vec3 translation)
+{
+	this->translation = translation;
+	updateModelMatrix();
+}
+
+void Mesh::SetRotation(glm::quat rotation)
+{
+	this->rotation = rotation;
+	updateModelMatrix();
+}
+
+void Mesh::SetScale(glm::vec3 scale)
+{
+	this->scale = scale;
+	updateModelMatrix();
+}
+
 void Mesh::appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	vertices.insert(vertices.end(), this->vertices.begin(), this->vertices.end());

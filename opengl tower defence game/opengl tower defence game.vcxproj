@@ -212,9 +212,6 @@
     <Image Include="res\textures\prototype.png" />
     <Image Include="res\textures\prototype1.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="res\models\teapot.obj" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

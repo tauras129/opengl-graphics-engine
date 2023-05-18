@@ -62,7 +62,7 @@ private:
 				glm::vec4 pos = glm::vec4(vertex.Position, 1.0f);
 				glm::vec4 norm = glm::vec4(vertex.Normal, 0.0f);
 				
-				if ( prevModelMatrix != glm::mat4( 0 ) && 0)
+				if ( prevModelMatrix != glm::mat4( 0 ))
 				{
 					vertex.Position = glm::vec3(prevModelMatrix / pos);
 					vertex.Normal = glm::vec3(prevModelMatrix / norm);

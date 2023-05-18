@@ -136,7 +136,7 @@ int main(void)
 		float moveSpeed = 1.0f;
 		float rotateSpeed = 0.1f;
 		float scaleSpeed = 0.25f;
-
+		bool pOpen = true;
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
@@ -146,7 +146,8 @@ int main(void)
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
-			ImGui::Begin("Configuration", (bool*)true);
+			ImGui::Begin("Configuration", &pOpen);
+			if (pOpen == false) break;
 
 			cube.setTextureID(texID);
 			vb.Bind();

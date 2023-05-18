@@ -101,7 +101,7 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 std::vector<Vertex> Mesh::getVertices()
 {
 	applyTransformations();
-	return std::vector<Vertex>();
+	return this->vertices;
 }
 
 std::vector<unsigned int, std::allocator<unsigned int>> Mesh::getIndices()

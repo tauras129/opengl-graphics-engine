@@ -24,6 +24,7 @@
 #include "Renderer/Texture.h"
 #include "Renderer/Camera.h"
 #include "Renderer/Mesh.h"
+#include "Renderer/MatrixTools.h"
 
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
@@ -64,16 +65,13 @@ int main(void)
 	std::cout << "Status: Max texture units: " << textureUnits << std::endl;
 	{
 
-		const int MaxQuadCount = 1;
-		const int MaxVertexCount = MaxQuadCount * 10000000;//2976
-		const int MaxIndexCount = MaxQuadCount * 196890;// 196890
-		const float aspectRatio = (float)width / (float)height; // replace with your window's aspect ratio
-		constexpr float fov = glm::radians(90.0f); // field of view in radians
+		constexpr float fov = 90.0f; // field of view in degrees
 		float near = 0.1f; // near clipping plane
-		float far = 1000.0f; // far clipping plane
+		float far = 100000.0f; // far clipping plane
+		glm::mat4 proj = MatrixTools::GetProjectionMatrix(width, height, fov, near, far);
 
-		Mesh cube;
-		cube.loadModel("res/models/bunny/bunny.obj"); // "res/models/bunny/bunny.obj"
+		Mesh object;
+		object.loadModel("res/models/bunny/bunny.obj"); // "res/models/bunny/bunny.obj"
 
 		// transparency
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -81,17 +79,6 @@ int main(void)
 		// depth test
 		glEnable(GL_DEPTH_TEST);
 
-		VertexArray va;
-		VertexBuffer vb(nullptr, sizeof(Vertex) * MaxVertexCount);// the array/nullptr, max size of the buffer(size of a vertex, max amount of vertices(how much vram to allocate)), OPTIONAL: type(for example: GL_DYNAMIC_DRAW is default)
-		VertexBufferLayout layout;
-		layout.Push<float>(3); //how many dimensions the thing is
-		layout.Push<float>(3); //normal
-		layout.Push<float>(2); //texture coordinates
-		layout.Push<unsigned int>(1); //texture ID
-		va.AddBuffer(vb, layout);
-
-		IndexBuffer ib(cube.indices, MaxIndexCount);
-		glm::mat4 proj = glm::perspective(fov, aspectRatio, near, far);
 		Camera camera1;
 
 		Shader shader("res/shaders/Basic");
@@ -101,17 +88,24 @@ int main(void)
 		Texture texture2("res/textures/prototype1.png");
 		Texture texture3("res/models/bunny/texture_standard.jpg");
 		Texture texture4("res/models/bunny/texture_ceramic.jpg");
+		Texture texture5("res/models/dog/texture.png");
+		Texture texture6("res/models/spooky thing/texture.png");
+		Texture texture7("res/models/spooky thing/normal.png");
+		Texture texture8("res/models/tiger/texture.png");
+		Texture texture9("res/models/tiger/texture-white.png");
 		texture1.Bind(0);
 		texture2.Bind(1);
 		texture3.Bind(2);
 		texture4.Bind(3);
-		int textures[4] = { 0, 1, 2, 3 };
-		shader.SetUniform1iv("u_Textures", textures, 4);
+		texture5.Bind(4);
+		texture6.Bind(5);
+		texture7.Bind(6);
+		texture8.Bind(7);
+		texture9.Bind(8);
+		int textures[9] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+		shader.SetUniform1iv("u_Textures", textures, 9);
 
-		va.Unbind();
 		shader.Unbind();
-		vb.Unbind();
-		ib.Unbind();
 
 		Renderer renderer;
 
@@ -136,7 +130,11 @@ int main(void)
 		float moveSpeed = 1.0f;
 		float rotateSpeed = 0.1f;
 		float scaleSpeed = 0.25f;
+
 		bool pOpen = true;
+
+		std::vector<Mesh> objects;
+
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
@@ -149,24 +147,16 @@ int main(void)
 			ImGui::Begin("Configuration", &pOpen);
 			if (pOpen == false) break;
 
-			cube.setTextureID(texID);
-			vb.Bind();
-
-			cube.SetPosition(translationB);
-			cube.SetRotation(rotationB);
-			cube.SetScale(scaleB);
-			std::vector<Vertex> vertices = cube.getVertices();
-			glBufferSubData(GL_ARRAY_BUFFER, 0, (GLsizeiptr)(sizeof(vertices[0]) * vertices.size()), vertices.data());
-
-			glm::mat4 model = glm::mat4(1);
 			camera1.SetPosition(translationA);
 			camera1.SetRotation(rotationA);
 			camera1.SetScale(scaleA);
 			shader.Bind();
-			shader.setUniformMat4f("u_Model", model);					// give shader the model matrix
 			shader.setUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
 			shader.setUniformMat4f("u_Proj", proj);						// give shader the projection matrix
-			renderer.Draw(va, ib, shader);
+
+			for (int i = 0; i < objects.size(); i++)
+				renderer.Draw(objects[i], shader);
+
 
 			ImGui::Text("Sliders");
 			ImGui::DragFloat("Movement Speed", &moveSpeed, 0.01f, 0.01f, 100.0f);	// Movement Speed
@@ -178,11 +168,36 @@ int main(void)
 			ImGui::DragFloat3("Rotation", &rotationA.x, rotateSpeed);	// Camera Rotation
 			ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
 
-			ImGui::Text("Object");
-			ImGui::DragFloat3("Position2", &translationB.x, moveSpeed);	// Camera Position
-			ImGui::DragFloat3("Rotation2", &rotationB.x, rotateSpeed);	// Camera Rotation
-			ImGui::DragFloat3("Scale(broken?)", &scaleB.x, scaleSpeed);	// Camera Scale
-			ImGui::SliderInt("Texture", &texID, 0, 3);					// Object Texture ID
+			if (ImGui::Button("New Object")) objects.push_back(object);  // Delete Object Button
+			for (int i = 0; i < objects.size(); i++)
+			{
+				std::string name = "Object " + std::to_string(i);
+				if (ImGui::CollapsingHeader(name.c_str()))
+				{
+					std::string positionName = "Position##Position" + std::to_string(i);
+					std::string rotationName = "Rotation##Rotation" + std::to_string(i);
+					std::string scaleName    = "Scale##Scale"       + std::to_string(i);
+					std::string texIDName    = "Texture##Texture"   + std::to_string(i);
+					std::string deleteName   = "Delete object##Del" + std::to_string(i);
+
+					translationB = objects[i].translation;
+					rotationB = glm::eulerAngles(objects[i].rotation);
+					scaleB = objects[i].scale;
+					texID = objects[i].texID;
+
+					ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
+					ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
+					ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
+					ImGui::SliderInt(texIDName.c_str(), &texID, 0, 8);							// Object Texture ID
+
+					objects[i].SetPosition(translationB);
+					objects[i].SetRotation(rotationB);
+					objects[i].SetScale(scaleB);
+					objects[i].setTextureID(texID);
+					if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
+				}
+			}
+
 			if (ImGui::Button("Exit"))									// Exit Button
 				break;
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);

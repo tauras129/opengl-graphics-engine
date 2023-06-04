@@ -7,7 +7,21 @@
 #include <stdexcept>
 #include <iostream>
 
+
 std::map<std::string, std::pair<std::vector<Vertex>, std::vector<unsigned int>>> Mesh::cachedModels;
+
+Mesh::Mesh()
+{
+	layout.Push<float>(3); //how many dimensions the thing is
+	layout.Push<float>(3); //normal
+	layout.Push<float>(2); //texture coordinates
+	layout.Push<unsigned int>(1); //texture ID
+}
+
+Mesh::~Mesh()
+{
+
+}
 
 void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices*/)
 {
@@ -37,12 +51,16 @@ void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, s
 
 	// Process the loaded model
 	processNode(scene->mRootNode, scene, vertices, indices);
-	for (unsigned int i = 0; i < vertices.size(); ++i) {
+	//for (unsigned int i = 0; i < vertices.size(); ++i) {
 
 		//std::cout << "vertex out" << std::endl;
 		//std::cout << vertices[i].Position.x << ", " << vertices[i].Position.y << ", " << vertices[i].Position.z << std::endl;
-	}
+	//}
 	Mesh::cachedModels.insert(std::make_pair(path, std::make_pair(vertices, indices)));
+
+	vb.Set(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size()));
+	va.AddBuffer(vb, layout);
+	ib.Set(indices, (unsigned int)indices.size());
 }
 
 void Mesh::processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
@@ -66,7 +84,6 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 	if (mesh->mNumVertices == 0) {
 		throw std::length_error("Model loading error: Mesh contains no vertices");
 	}
-	std::cout << mesh->mNumVertices << std::endl;
 	// Process the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 		Vertex vertex;
@@ -98,45 +115,39 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 	}
 }
 
-std::vector<Vertex> Mesh::getVertices()
+std::vector<Vertex> Mesh::getVertices() const
 {
-	applyTransformations();
 	return this->vertices;
 }
 
-std::vector<unsigned int, std::allocator<unsigned int>> Mesh::getIndices()
+std::vector<unsigned int, std::allocator<unsigned int>> Mesh::getIndices() const
 {
 	return this->indices;
 }
 
-void Mesh::appendToVerices(std::vector<Vertex>& vertices)
-{
-	vertices.insert(vertices.end(), this->vertices.begin(), this->vertices.end());
-}
-
-void Mesh::appendToIndices(std::vector<unsigned int, std::allocator<unsigned int>>& indices)
-{
-	indices.insert(indices.end(), this->indices.begin(), this->indices.end());
-}
 
 void Mesh::GlobalMove(glm::vec3 translation)
 {
 	this->translation += translation;
+	updateModelMatrix();
 }
 
 void Mesh::LocalMove(glm::vec3 translation)
 {
 	this->translation += rotation*translation;
+	updateModelMatrix();
 }
 
 void Mesh::Rotate(glm::quat rotation)
 {
 	this->rotation *= rotation;
+	updateModelMatrix();
 }
 
 void Mesh::Scale(glm::vec3 scale)
 {
 	this->scale *= scale;
+	updateModelMatrix();
 }
 
 void Mesh::SetPosition(glm::vec3 translation)
@@ -165,7 +176,11 @@ void Mesh::appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector
 
 void Mesh::setTextureID(int id)
 {
+	this->texID = id;
 	for (auto& vertex : vertices) {
 		vertex.TexID = id;
 	}
+
+	vb.Set(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size()));
+	va.AddBuffer(vb, layout);
 }

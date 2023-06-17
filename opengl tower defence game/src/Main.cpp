@@ -168,7 +168,9 @@ int main(void)
 			ImGui::DragFloat3("Rotation", &rotationA.x, rotateSpeed);	// Camera Rotation
 			ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
 
-			if (ImGui::Button("New Object")) objects.push_back(object);  // Delete Object Button
+			if (ImGui::Button("New Object")) objects.push_back(object);  // New Object Button
+			if (ImGui::Button("100 New Objects")) for (int i = 0; i < 100; i++) 
+				objects.push_back(object);  // 100 New Objects Button
 			for (int i = 0; i < objects.size(); i++)
 			{
 				std::string name = "Object " + std::to_string(i);

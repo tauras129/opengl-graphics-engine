@@ -126,6 +126,9 @@ int main(void)
 		glm::vec3 translationB(0, 0, 0);
 		glm::vec3 rotationB(0, 0, 0);
 		glm::vec3 scaleB(1, 1, 1);
+
+		glm::vec4 clearColor(0.2f, 0.3f, 0.8f, 1.0f);
+
 		int texID = 0;
 		float moveSpeed = 1.0f;
 		float rotateSpeed = 0.1f;
@@ -140,7 +143,7 @@ int main(void)
 		{
 
 			/* Render here */
-			renderer.Clear(0.2f, 0.3f, 0.8f, 1.0f);
+			renderer.Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
@@ -158,6 +161,9 @@ int main(void)
 				renderer.Draw(objects[i], shader);
 
 
+			ImGui::Text("Environment");
+			ImGui::ColorEdit4("Background Color", &clearColor.r, ImGuiColorEditFlags_AlphaPreviewHalf | ImGuiColorEditFlags_AlphaBar);
+
 			ImGui::Text("Sliders");
 			ImGui::DragFloat("Movement Speed", &moveSpeed, 0.01f, 0.01f, 100.0f);	// Movement Speed
 			ImGui::DragFloat("Rotation Speed", &rotateSpeed, 0.01f, 0.01f, 10.0f);  // Rotation Speed
@@ -169,7 +175,7 @@ int main(void)
 			ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
 
 			if (ImGui::Button("New Object")) objects.push_back(object);  // New Object Button
-			if (ImGui::Button("100 New Objects")) for (int i = 0; i < 100; i++) 
+			if (ImGui::Button("100 New Objects")) for (int i = 0; i < 100; i++)
 				objects.push_back(object);  // 100 New Objects Button
 			for (int i = 0; i < objects.size(); i++)
 			{
@@ -182,10 +188,10 @@ int main(void)
 					std::string texIDName    = "Texture##Texture"   + std::to_string(i);
 					std::string deleteName   = "Delete object##Del" + std::to_string(i);
 
-					translationB = objects[i].translation;
-					rotationB = glm::eulerAngles(objects[i].rotation);
-					scaleB = objects[i].scale;
-					texID = objects[i].texID;
+					translationB = objects[i].GetTranslation();
+					rotationB = glm::eulerAngles(objects[i].GetRotation());
+					scaleB = objects[i].GetScale();
+					texID = objects[i].GetTextureID();
 
 					ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
 					ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
@@ -195,7 +201,7 @@ int main(void)
 					objects[i].SetPosition(translationB);
 					objects[i].SetRotation(rotationB);
 					objects[i].SetScale(scaleB);
-					objects[i].setTextureID(texID);
+					objects[i].SetTextureID(texID);
 					if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
 				}
 			}

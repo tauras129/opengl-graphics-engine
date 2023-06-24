@@ -60,19 +60,12 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/)
 // no need to set the shaders model matrix, this function sets that(unless you change the parameter). That being said you do still need to set the view and projection matrices
 {
-	std::vector<Vertex> vertices = mesh.getVertices();
-
-	std::vector<unsigned int, std::allocator<unsigned int>> indices = mesh.getIndices();
-	//VertexArray va;
-	//VertexBuffer vb(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size())); //TODO!: make this not be run every frame for every object
-	//va.AddBuffer(vb, mesh.layout);
-	//IndexBuffer ib(indices, (unsigned int)indices.size());
 
 	shader.Bind();
 	mesh.va.Bind();
 	mesh.ib.Bind();
 
-	if(setModelMatrix) shader.setUniformMat4f("u_Model", mesh.modelMatrix); // give shader the model matrix
+	if(setModelMatrix) shader.setUniformMat4f("u_Model", mesh.GetModelMatrix()); // give shader the model matrix
 	glDrawElements(GL_TRIANGLES, mesh.ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 
 }

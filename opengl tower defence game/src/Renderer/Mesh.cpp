@@ -16,6 +16,8 @@ Mesh::Mesh()
 	layout.Push<float>(3); //normal
 	layout.Push<float>(2); //texture coordinates
 	layout.Push<unsigned int>(1); //texture ID
+
+	updateModelMatrix();
 }
 
 Mesh::~Mesh()
@@ -115,12 +117,12 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 	}
 }
 
-std::vector<Vertex> Mesh::getVertices() const
+std::vector<Vertex> Mesh::GetVertices() const
 {
 	return this->vertices;
 }
 
-std::vector<unsigned int, std::allocator<unsigned int>> Mesh::getIndices() const
+std::vector<unsigned int, std::allocator<unsigned int>> Mesh::GetIndices() const
 {
 	return this->indices;
 }
@@ -168,13 +170,13 @@ void Mesh::SetScale(glm::vec3 scale)
 	updateModelMatrix();
 }
 
-void Mesh::appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
+void Mesh::AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices)
 {
 	vertices.insert(vertices.end(), this->vertices.begin(), this->vertices.end());
 	indices.insert(indices.end(), this->indices.begin(), this->indices.end());
 }
 
-void Mesh::setTextureID(int id)
+void Mesh::SetTextureID(int id)
 {
 	this->texID = id;
 	for (auto& vertex : vertices) {

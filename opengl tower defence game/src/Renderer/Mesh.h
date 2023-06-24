@@ -21,13 +21,6 @@ class Mesh
 {
 public:
 	// mesh data
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int, std::allocator<unsigned int>> indices;
-	glm::mat4 modelMatrix; // combined transformation matrix
-	glm::vec3 translation = glm::vec3(0);
-	glm::quat rotation = glm::quat(glm::vec3(0));
-	glm::vec3 scale = glm::vec3(1);
-	int texID = 1;
 	VertexBufferLayout layout;
 	VertexArray va;
 	VertexBuffer vb;
@@ -36,10 +29,15 @@ public:
 	Mesh();
 	~Mesh();
 	void loadModel(const std::string& path/*, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices*/ );
-	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
-	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
-	std::vector<Vertex> getVertices() const;
-	std::vector<unsigned int, std::allocator<unsigned int>> getIndices() const;
+
+	std::vector<Vertex> GetVertices() const;
+	std::vector<unsigned int, std::allocator<unsigned int>> GetIndices() const;
+	glm::vec3 GetTranslation() const { return translation; }
+	glm::quat GetRotation() const { return rotation; }
+	glm::vec3 GetScale() const { return scale; }
+	int GetTextureID() const { return texID; }
+	glm::mat4 GetModelMatrix() const { return modelMatrix; }
+
 	void GlobalMove(glm::vec3 translation);
 	void LocalMove(glm::vec3 translation);
 	void Rotate(glm::quat rotation);
@@ -48,8 +46,8 @@ public:
 	void SetPosition(glm::vec3 translation);
 	void SetRotation(glm::quat rotation);
 	void SetScale(glm::vec3 scale);
-	void appendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
-	void setTextureID(int id);
+	void AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void SetTextureID(int id);
 
 	Mesh(const Mesh &other)
 	{
@@ -67,6 +65,19 @@ public:
 	}
 
 private:
+
+	// mesh data
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int, std::allocator<unsigned int>> indices;
+	glm::mat4 modelMatrix; // combined transformation matrix
+	glm::vec3 translation = glm::vec3(0);
+	glm::quat rotation = glm::quat(glm::vec3(0));
+	glm::vec3 scale = glm::vec3(1);
+	int texID = 1;
+
+	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+
 	static std::map<std::string, std::pair<std::vector<Vertex>, std::vector<unsigned int>>> cachedModels;
 
 	void updateModelMatrix() {

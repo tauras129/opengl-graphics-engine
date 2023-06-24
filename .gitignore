@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/opengl tower defence game/imgui.ini
+/opengl tower defence game/imgui.ini

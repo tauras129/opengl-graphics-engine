@@ -38,7 +38,7 @@ void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, s
 
 	// Create an instance of the Importer class
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_TransformUVCoords);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_TransformUVCoords);
 
 	// Check if there was an error while loading the file
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {

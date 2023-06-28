@@ -71,7 +71,7 @@ int main(void)
 		glm::mat4 proj = MatrixTools::GetProjectionMatrix(width, height, fov, near, far);
 
 		Mesh object;
-		object.loadModel("res/models/bunny/bunny.obj"); // "res/models/bunny/bunny.obj"
+		object.loadModel("res/models/bunny/bunny.obj"); // "res/models/texture coord test/texcoord test.obj"
 
 		// transparency
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -93,6 +93,7 @@ int main(void)
 		Texture texture7("res/models/spooky thing/normal.png");
 		Texture texture8("res/models/tiger/texture.png");
 		Texture texture9("res/models/tiger/texture-white.png");
+		Texture texture10("res/models/texture coord test/texcoord test.png");
 		texture1.Bind(0);
 		texture2.Bind(1);
 		texture3.Bind(2);
@@ -102,8 +103,9 @@ int main(void)
 		texture7.Bind(6);
 		texture8.Bind(7);
 		texture9.Bind(8);
-		int textures[9] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-		shader.SetUniform1iv("u_Textures", textures, 9);
+		texture10.Bind(9);
+		int textures[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		shader.SetUniform1iv("u_Textures", textures, 10);
 
 		shader.Unbind();
 
@@ -196,7 +198,7 @@ int main(void)
 					ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
 					ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
 					ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
-					ImGui::SliderInt(texIDName.c_str(), &texID, 0, 8);							// Object Texture ID
+					ImGui::SliderInt(texIDName.c_str(), &texID, 0, 9);							// Object Texture ID
 
 					objects[i].SetPosition(translationB);
 					objects[i].SetRotation(rotationB);

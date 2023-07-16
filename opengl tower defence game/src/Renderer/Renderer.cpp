@@ -57,6 +57,19 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 	ib.Unbind();
 }
 
+void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/)
+// no need to set the shaders model matrix, this function sets that(unless you change the parameter). That being said you do still need to set the view and projection matrices
+{
+
+	shader.Bind();
+	mesh.va.Bind();
+	mesh.ib.Bind();
+
+	if(setModelMatrix) shader.setUniformMat4f("u_Model", mesh.GetModelMatrix()); // give shader the model matrix
+	glDrawElements(GL_TRIANGLES, mesh.ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+
+}
+
 void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 	// ignore non-significant error/warning codes

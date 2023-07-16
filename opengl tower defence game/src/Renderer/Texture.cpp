@@ -3,7 +3,7 @@
 #include <iostream>
 #include "Renderer.h"
 
-Texture::Texture(const std::string& path)
+Texture::Texture(const std::string& path, const GLint scaleType /* = GL_NEAREST */)
 	: m_FilePath(path)
 {
 	stbi_set_flip_vertically_on_load(1);
@@ -12,8 +12,8 @@ Texture::Texture(const std::string& path)
 	glGenTextures(1, &m_RendererID);
 	glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		// REQUIRED | how to downscale the texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		// REQUIRED | how to upscale the texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, scaleType);		// REQUIRED | how to downscale the texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, scaleType);		// REQUIRED | how to upscale the texture
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// REQUIRED | how to wrap the texture
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	// REQUIRED | how to wrap the texture
 
@@ -25,7 +25,7 @@ Texture::Texture(const std::string& path)
 	}
 	else
 	{
-		std::cout << "\nError: Failed to load texture" << std::endl;
+		std::cout << "\nError: Failed to load texture " << path << std::endl;
 		std::cout << stbi_failure_reason() << std::endl;
 		__debugbreak();
 	}

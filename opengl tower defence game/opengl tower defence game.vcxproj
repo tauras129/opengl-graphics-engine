@@ -130,6 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\vs code\projects\opengl tower defence game\dependencies\assimp-dependencies\include;D:\vs code\projects\opengl tower defence game\dependencies\WIN64\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,7 +157,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\WIN64\lib-glew;$(SolutionDir)dependencies\WIN64\lib-assimp;$(SolutionDir)dependencies\WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\WIN64\lib-zlib;$(SolutionDir)dependencies\WIN64\lib-glew;$(SolutionDir)dependencies\WIN64\lib-assimp;$(SolutionDir)dependencies\WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;msvcrtd.lib;vcruntimed.lib;ucrtd.lib;zlibstatic.lib;assimp-vc143-mtd.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -186,6 +187,7 @@
     <None Include="res\shaders\Basic.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Renderer\MatrixTools.h" />
     <ClInclude Include="src\Renderer\Mesh.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\Camera.h" />
@@ -211,9 +213,6 @@
   <ItemGroup>
     <Image Include="res\textures\prototype.png" />
     <Image Include="res\textures\prototype1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="res\models\teapot.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -19,7 +19,7 @@ struct VertexBufferElement
 		case GL_INT:			return 4;
 		case GL_BYTE:			return 1;
 		}
-		ASSERT(false);
+		__debugbreak();
 		return 0;
 	}
 };
@@ -28,10 +28,8 @@ class VertexBufferLayout
 {
 private:
 	std::vector<VertexBufferElement> m_Elements;
-	unsigned int m_Stride;
+	unsigned int m_Stride = 0;
 public:
-	VertexBufferLayout()
-		: m_Stride(0) {}
 
 	template<typename T>
 	void Push(unsigned int count)

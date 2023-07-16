@@ -72,6 +72,15 @@ void Camera::Rotate(glm::quat rotation)
 
 }
 
+void Camera::Scale(glm::vec3 scale)
+{
+	this->scale *= scale;
+	glm::mat4 r = glm::mat4_cast(rotation);
+	glm::mat4 t = glm::translate(glm::mat4(1.f), translation);
+	glm::mat4 s = glm::scale(glm::mat4(1.f), this->scale);
+	view = glm::affineInverse(t * r * s);
+}
+
 void Camera::SetPosition(glm::vec3 translation)
 {
 	this->translation = translation;
@@ -87,13 +96,22 @@ void Camera::SetRotation(glm::quat rotation)
 
 	this->rotation = rotation;
 	glm::mat4 r = glm::mat4_cast(rotation);
-	glm::mat4 t = glm::translate(glm::mat4(1.f), translation);
-	glm::mat4 s = glm::scale(glm::mat4(1.f), scale);
+	glm::mat4 t = glm::translate(glm::mat4(1.0f), translation);
+	glm::mat4 s = glm::scale(glm::mat4(1.0f), scale);
 	view = glm::affineInverse(t * r * s);
 
 }
 
-void Camera::SetViewMatrix(glm::mat4 const &viewMatrix)
+void Camera::SetScale(glm::vec3 scale)
+{
+	this->scale = scale;
+	glm::mat4 r = glm::mat4_cast(rotation);
+	glm::mat4 t = glm::translate(glm::mat4(1.f), translation);
+	glm::mat4 s = glm::scale(glm::mat4(1.f), this->scale);
+	view = glm::affineInverse(t * r * s);
+}
+
+void Camera::SetViewMatrix(glm::mat4 const &viewMatrix) // will reset if you call SetScale, Scale, Move, etc
 {
 	view = viewMatrix;
 }

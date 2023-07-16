@@ -3,9 +3,10 @@
 #include <GL/glew.h>
 #include "VertexArray.h"
 #include "IndexBuffer.h"
-#include "Shader.h"
+#include "Mesh.h"
 #include <iostream>
 #include <array>
+#include "Shader.h"
 
 #define ASSERT(x) if (!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
@@ -23,6 +24,7 @@ public:
 	void Clear() const;
 	void Clear(float red, float green, float blue, float alpha) const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+	void Draw(Mesh& mesh, Shader& shader, bool setModelMatrix = true);
 	void InitOpenGL();
 
 private:

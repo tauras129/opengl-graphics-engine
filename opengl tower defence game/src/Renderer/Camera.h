@@ -17,9 +17,11 @@ public:
 	void GlobalMove(glm::vec3 translation);
 	void LocalMove(glm::vec3 translation);
 	void Rotate(glm::quat rotation);
+	void Scale(glm::vec3 scale);
 
 	void SetPosition(glm::vec3 translation);
 	void SetRotation(glm::quat rotation);
+	void SetScale(glm::vec3 scale);
 	//void SetModelMatrix(glm::mat4 modelMatrix);
 	//void SetProjectionMatrix(glm::mat4 projectionMatrix);
 	void SetViewMatrix(glm::mat4 const &viewMatrix);

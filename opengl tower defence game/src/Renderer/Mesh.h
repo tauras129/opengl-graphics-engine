@@ -8,6 +8,7 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Texture.h"
 
 
 struct Vertex {
@@ -23,12 +24,13 @@ public:
 	// mesh data
 	VertexBufferLayout layout;
 	VertexArray va;
-	VertexBuffer vb;
+	VertexBuffer vb = VertexBuffer(nullptr, 0);
 	IndexBuffer ib;
 
 	Mesh();
 	~Mesh();
-	void loadModel(const std::string& path/*, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices*/ );
+	void loadModel(const std::string& path);
+	void loadModel(const std::string& path, const Texture objectTexture);
 
 	std::vector<Vertex> GetVertices() const;
 	std::vector<unsigned int, std::allocator<unsigned int>> GetIndices() const;
@@ -37,6 +39,7 @@ public:
 	glm::vec3 GetScale() const { return scale; }
 	int GetTextureID() const { return texID; }
 	glm::mat4 GetModelMatrix() const { return modelMatrix; }
+	Texture& GetTexture() { return texture; }
 
 	void GlobalMove(glm::vec3 translation);
 	void LocalMove(glm::vec3 translation);
@@ -48,6 +51,8 @@ public:
 	void SetScale(glm::vec3 scale);
 	void AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void SetTextureID(int id);
+	void SetTexture(const Texture& newTexture) { texture = newTexture; }
+	void ResetTexture() { texture = defaultTexture; }
 
 	Mesh(const Mesh &other)
 	{
@@ -59,6 +64,7 @@ public:
 		scale = other.scale;
 		texID = other.texID;
 		layout = other.layout;
+		texture = other.texture;
 		vb.Set(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size()));
 		va.AddBuffer(vb, layout);
 		ib.Set(indices, (unsigned int)indices.size());
@@ -74,6 +80,8 @@ private:
 	glm::quat rotation = glm::quat(glm::vec3(0));
 	glm::vec3 scale = glm::vec3(1);
 	int texID = 1;
+	static const Texture defaultTexture;
+	Texture texture;
 
 	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);

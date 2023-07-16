@@ -24,7 +24,7 @@ public:
 	void Clear() const;
 	void Clear(float red, float green, float blue, float alpha) const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
-	void Draw(Mesh& mesh, Shader& shader, bool setModelMatrix = true);
+	void Draw(Mesh& mesh, Shader& shader, bool setModelMatrix = true, bool setTexture = true);
 	void InitOpenGL();
 
 private:

@@ -57,15 +57,18 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 	ib.Unbind();
 }
 
-void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/)
-// no need to set the shaders model matrix, this function sets that(unless you change the parameter). That being said you do still need to set the view and projection matrices
+void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/, bool setTexture /*= true*/)
+// You do not need to set the shaders model matrix or texture, this function sets that(unless you change the parameter also setting the texture binds texture slot 0 to the meshes texture).
+// You do still need to set the view and projection matrices.
 {
 
 	shader.Bind();
 	mesh.va.Bind();
 	mesh.ib.Bind();
+	mesh.GetTexture().Bind();
 
-	if(setModelMatrix) shader.setUniformMat4f("u_Model", mesh.GetModelMatrix()); // give shader the model matrix
+	if(setModelMatrix) shader.SetUniformMat4f("u_Model", mesh.GetModelMatrix()); // give shader the model matrix
+	if (setTexture) shader.SetUniform1i("u_Texture", 0); // give shader the models texture
 	glDrawElements(GL_TRIANGLES, mesh.ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 
 }

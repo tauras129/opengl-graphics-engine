@@ -9,6 +9,7 @@
 
 
 std::map<std::string, std::pair<std::vector<Vertex>, std::vector<unsigned int>>> Mesh::cachedModels;
+const Texture Mesh::defaultTexture = Texture("res/textures/prototype.png");
 
 Mesh::Mesh()
 {
@@ -18,15 +19,63 @@ Mesh::Mesh()
 	layout.Push<unsigned int>(1); //texture ID
 
 	updateModelMatrix();
+	texture = defaultTexture;
 }
 
 Mesh::~Mesh()
 {
-
+	va.Unbind();
+	va.~VertexArray();
+	vb.Unbind();
+	vb.~VertexBuffer();
+	ib.Unbind();
+	ib.~IndexBuffer();
 }
 
-void Mesh::loadModel(const std::string& path/*, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices*/)
+void Mesh::loadModel(const std::string& path)
 {
+
+	// Check if the model is already in the cache
+	auto iter = Mesh::cachedModels.find(path);
+	if (iter != Mesh::cachedModels.end()) {
+		vertices = iter->second.first;
+		indices = iter->second.second;
+		return;
+	}
+
+	// Create an instance of the Importer class
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_TransformUVCoords);
+
+	// Check if there was an error while loading the file
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+		std::cout << "Model loading error: " + std::string(importer.GetErrorString()) + " trying to load model: " + path;
+		throw std::runtime_error("Model loading error: " + std::string(importer.GetErrorString()) + " trying to load model: " + path);
+	}
+
+	// Check if the model contains any meshes
+	if (scene->mNumMeshes == 0) {
+		throw std::length_error("Model loading error: No meshes found in model: " + path);
+	}
+
+	// Process the loaded model
+	processNode(scene->mRootNode, scene, vertices, indices);
+	//for (unsigned int i = 0; i < vertices.size(); ++i) {
+
+		//std::cout << "vertex out" << std::endl;
+		//std::cout << vertices[i].Position.x << ", " << vertices[i].Position.y << ", " << vertices[i].Position.z << std::endl;
+	//}
+	Mesh::cachedModels.insert(std::make_pair(path, std::make_pair(vertices, indices)));
+
+	vb.Set(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size()));
+	va.AddBuffer(vb, layout);
+	ib.Set(indices, (unsigned int)indices.size());
+}
+
+void Mesh::loadModel(const std::string& path, const Texture objectTexture)
+{
+
+	texture = objectTexture;
 
 	// Check if the model is already in the cache
 	auto iter = Mesh::cachedModels.find(path);

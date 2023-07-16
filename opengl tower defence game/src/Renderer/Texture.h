@@ -1,8 +1,16 @@
 #pragma once
 #include <string>
+#include <unordered_map>
 
 #define GL_NEAREST 0x2600
 #define GL_LINEAR 0x2601
+
+struct TextureInfo
+{
+	int Width = 0;
+	int Height = 0;
+	int BPP = 0; // bytes per pixel
+};
 
 class Texture
 {
@@ -10,10 +18,11 @@ private:
 	unsigned int m_RendererID = 0;
 	std::string m_FilePath;
 	unsigned char* m_LocalBuffer = nullptr;
-	int m_Width = 0;
-	int m_Height = 0;
-	int m_BPP = 0; // bytes per pixel
+	TextureInfo m_textureInfo;
+
+	static std::unordered_map<std::string, std::pair<TextureInfo, unsigned int>>textureCache; // cache of all textures( m_FilePath, pair< m_textureData, m_RendererID> )
 public:
+	Texture();
 	explicit Texture(const std::string& path, const int scaleType = GL_NEAREST);
 	// path is the path to the texture in any of these formats: JPG, PNG, TGA, BMP, PSD, GIF, HDR, PIC. The path to the texture is relative to where you run the program
 	// or (untested) you can do something like "C:/users/user/images/something.png" but keep in mind that I do not know if this will work as I have not tried this.
@@ -26,6 +35,9 @@ public:
 	void Bind(unsigned int slot = 0) const;
 	void Unbind() const;
 
-	inline int GetWidth() const { return m_Width; }
-	inline int GetHeight() const { return m_Height; }
+	void Set(const std::string& path, const int scaleType = GL_NEAREST);
+
+	inline int GetWidth() const { return m_textureInfo.Width; }
+	inline int GetHeight() const { return m_textureInfo.Height; }
+
 };

@@ -65,47 +65,37 @@ int main(void)
 	std::cout << "Status: Max texture units: " << textureUnits << std::endl;
 	{
 
-		constexpr float fov = 90.0f; // field of view in degrees
-		float near = 0.1f; // near clipping plane
-		float far = 100000.0f; // far clipping plane
-		glm::mat4 proj = MatrixTools::GetProjectionMatrix(width, height, fov, near, far);
-
-		Mesh object;
-		object.loadModel("res/models/bunny/bunny.obj"); // "res/models/texture coord test/texcoord test.obj"
-
 		// transparency
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 		// depth test
 		glEnable(GL_DEPTH_TEST);
 
+		constexpr float fov = 90.0f; // field of view in degrees
+		float near = 0.1f; // near clipping plane
+		float far = 100000.0f; // far clipping plane
+		glm::mat4 proj = MatrixTools::GetProjectionMatrix(width, height, fov, near, far);
+
+		Mesh object;
+		object.loadModel("res/models/texture coord test/texcoord test.obj"); // "res/models/bunny/bunny.obj"
+
 		Camera camera1;
 
 		Shader shader("res/shaders/Basic");
 		shader.Bind();
 
-		Texture texture1("res/textures/prototype.png");
-		Texture texture2("res/textures/prototype1.png");
-		Texture texture3("res/models/bunny/texture_standard.jpg");
-		Texture texture4("res/models/bunny/texture_ceramic.jpg");
-		Texture texture5("res/models/dog/texture.png");
-		Texture texture6("res/models/spooky thing/texture.png");
-		Texture texture7("res/models/spooky thing/normal.png");
-		Texture texture8("res/models/tiger/texture.png");
-		Texture texture9("res/models/tiger/texture-white.png");
-		Texture texture10("res/models/texture coord test/texcoord test.png");
-		texture1.Bind(0);
-		texture2.Bind(1);
-		texture3.Bind(2);
-		texture4.Bind(3);
-		texture5.Bind(4);
-		texture6.Bind(5);
-		texture7.Bind(6);
-		texture8.Bind(7);
-		texture9.Bind(8);
-		texture10.Bind(9);
-		int textures[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		shader.SetUniform1iv("u_Textures", textures, 10);
+		std::vector<Texture> textures{
+			Texture("res/textures/prototype.png"),
+			Texture("res/textures/prototype1.png"),
+			Texture("res/models/bunny/texture_standard.jpg"),
+			Texture("res/models/bunny/texture_ceramic.jpg"),
+			Texture("res/models/dog/texture.png"),
+			Texture("res/models/spooky thing/texture.png"),
+			Texture("res/models/spooky thing/normal.png"),
+			Texture("res/models/tiger/texture.png"),
+			Texture("res/models/tiger/texture-white.png"),
+			Texture("res/models/texture coord test/texcoord test.png")
+		};
 
 		shader.Unbind();
 
@@ -156,8 +146,8 @@ int main(void)
 			camera1.SetRotation(rotationA);
 			camera1.SetScale(scaleA);
 			shader.Bind();
-			shader.setUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
-			shader.setUniformMat4f("u_Proj", proj);						// give shader the projection matrix
+			shader.SetUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
+			shader.SetUniformMat4f("u_Proj", proj);						// give shader the projection matrix
 
 			for (int i = 0; i < objects.size(); i++)
 				renderer.Draw(objects[i], shader);
@@ -198,12 +188,12 @@ int main(void)
 					ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
 					ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
 					ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
-					ImGui::SliderInt(texIDName.c_str(), &texID, 0, 9);							// Object Texture ID
+					ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());							// Object Texture ID
 
 					objects[i].SetPosition(translationB);
 					objects[i].SetRotation(rotationB);
 					objects[i].SetScale(scaleB);
-					objects[i].SetTextureID(texID);
+					objects[i].SetTexture(textures[texID-1]);
 					if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
 				}
 			}

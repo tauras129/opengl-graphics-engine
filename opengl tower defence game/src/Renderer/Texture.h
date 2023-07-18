@@ -20,7 +20,13 @@ private:
 	unsigned char* m_LocalBuffer = nullptr;
 	TextureInfo m_textureInfo;
 
-	static std::unordered_map<std::string, std::pair<TextureInfo, unsigned int>>textureCache; // cache of all textures( m_FilePath, pair< m_textureData, m_RendererID> )
+	void loadTexture(const std::string& path, const int scaleType);
+
+	auto& getTextureCache()
+	{
+		static std::unordered_map<std::string, std::pair<TextureInfo, unsigned int>> cache;
+		return cache;
+	} // cache of all textures( m_FilePath, pair< m_textureData, m_RendererID> )
 public:
 	Texture();
 	explicit Texture(const std::string& path, const int scaleType = GL_NEAREST);

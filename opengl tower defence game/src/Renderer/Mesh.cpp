@@ -16,7 +16,6 @@ Mesh::Mesh()
 	layout.Push<float>(3); //how many dimensions the thing is
 	layout.Push<float>(3); //normal
 	layout.Push<float>(2); //texture coordinates
-	layout.Push<unsigned int>(1); //texture ID
 
 	updateModelMatrix();
 	texture = defaultTexture;
@@ -142,7 +141,6 @@ void Mesh::processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Ver
 		vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		vertex.Normal = mesh->HasNormals() ? glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z) : glm::vec3(0, 0, 0);
 		vertex.TexCoords = mesh->HasTextureCoords(0) ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0, 0);
-		vertex.TexID = 1;
 
 		//std::cout << "vertex" << std::endl;
 
@@ -228,10 +226,4 @@ void Mesh::AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector
 void Mesh::SetTextureID(int id)
 {
 	this->texID = id;
-	for (auto& vertex : vertices) {
-		vertex.TexID = id;
-	}
-
-	vb.Set(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size()));
-	va.AddBuffer(vb, layout);
 }

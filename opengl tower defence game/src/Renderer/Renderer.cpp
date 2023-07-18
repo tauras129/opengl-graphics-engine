@@ -4,7 +4,7 @@
 
 void GLClearError() // old error handling
 {
-	while (glGetError() != GL_NO_ERROR);
+	while (glGetError() != GL_NO_ERROR) std::cout << glGetError() << std::endl;
 }
 
 bool GLLogCall(const char* function, const char* file, int line) // old error handling

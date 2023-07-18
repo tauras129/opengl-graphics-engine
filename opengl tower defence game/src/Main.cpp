@@ -40,6 +40,7 @@ int main(void)
 	/* Create a windowed mode window and its OpenGL context */
 	int width  = 1080;
 	int height = 720;
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	window = glfwCreateWindow(width, height, "opengl tower defense", nullptr, nullptr);
 	if (!window)
 	{
@@ -84,18 +85,18 @@ int main(void)
 		Shader shader("res/shaders/Basic");
 		shader.Bind();
 
-		std::vector<Texture> textures{
-			Texture("res/textures/prototype.png"),
-			Texture("res/textures/prototype1.png"),
-			Texture("res/models/bunny/texture_standard.jpg"),
-			Texture("res/models/bunny/texture_ceramic.jpg"),
-			Texture("res/models/dog/texture.png"),
-			Texture("res/models/spooky thing/texture.png"),
-			Texture("res/models/spooky thing/normal.png"),
-			Texture("res/models/tiger/texture.png"),
-			Texture("res/models/tiger/texture-white.png"),
-			Texture("res/models/texture coord test/texcoord test.png")
-		};
+		std::vector<Texture> textures;
+		textures.push_back(Texture("res/textures/prototype.png"));
+		textures.push_back(Texture("res/textures/prototype1.png"));
+		textures.push_back(Texture("res/models/bunny/texture_standard.jpg"));
+		textures.push_back(Texture("res/models/bunny/texture_ceramic.jpg"));
+		textures.push_back(Texture("res/models/dog/texture.png"));
+		textures.push_back(Texture("res/models/spooky thing/texture.png"));
+		textures.push_back(Texture("res/models/spooky thing/normal.png"));
+		textures.push_back(Texture("res/models/tiger/texture.png"));
+		textures.push_back(Texture("res/models/tiger/texture-white.png"));
+		textures.push_back(Texture("res/models/texture coord test/texcoord test.png"));
+
 
 		shader.Unbind();
 
@@ -188,13 +189,14 @@ int main(void)
 					ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
 					ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
 					ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
-					ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());							// Object Texture ID
+					ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());			// Object Texture ID
 
 					objects[i].SetPosition(translationB);
 					objects[i].SetRotation(rotationB);
 					objects[i].SetScale(scaleB);
+					objects[i].SetTextureID(texID);
 					objects[i].SetTexture(textures[texID-1]);
-					if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
+					if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin()+i);  // Delete Object Button
 				}
 			}
 

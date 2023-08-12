@@ -9,7 +9,6 @@
 
 
 std::map<std::string, std::pair<std::vector<Vertex>, std::vector<unsigned int>>> Mesh::cachedModels;
-const Texture Mesh::defaultTexture = Texture("res/textures/prototype.png");
 
 Mesh::Mesh()
 {
@@ -18,7 +17,13 @@ Mesh::Mesh()
 	layout.Push<float>(2); //texture coordinates
 
 	updateModelMatrix();
-	texture = defaultTexture;
+	texture = GetDefaultTexture();
+}
+
+Texture& Mesh::GetDefaultTexture()
+{
+	static Texture defaultTexture("res/textures/prototype.png");
+	return defaultTexture;
 }
 
 Mesh::~Mesh()

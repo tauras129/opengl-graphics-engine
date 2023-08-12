@@ -51,7 +51,7 @@ public:
 	void AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void SetTextureID(int id);
 	void SetTexture(const Texture& newTexture) { texture = newTexture; }
-	void ResetTexture() { texture = defaultTexture; }
+	void ResetTexture() { texture = GetDefaultTexture(); }
 
 	Mesh(const Mesh &other)
 	{
@@ -79,7 +79,7 @@ private:
 	glm::quat rotation = glm::quat(glm::vec3(0));
 	glm::vec3 scale = glm::vec3(1);
 	int texID = 1;
-	static const Texture defaultTexture;
+	static Texture& GetDefaultTexture();
 	Texture texture;
 
 	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);

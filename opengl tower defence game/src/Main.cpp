@@ -2,7 +2,6 @@
 #include "Vendor/imgui/imgui_impl_glfw.h"
 #include "Vendor/imgui/imgui_impl_opengl3.h"
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <ASSIMP/Importer.hpp>
@@ -38,10 +37,8 @@ int main(void)
 		return -1;
 
 	/* Create a windowed mode window and its OpenGL context */
-	int width  = 1080;
-	int height = 720;
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	window = glfwCreateWindow(width, height, "opengl tower defense", nullptr, nullptr);
+	window = glfwCreateWindow(windowWidth, windowHeight, "opengl tower defense", nullptr, nullptr);
 	if (!window)
 	{
 		glfwTerminate();
@@ -55,6 +52,8 @@ int main(void)
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GLMessageCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+	glfwSetWindowSizeCallback(window, WindowResizeCallback);
 	if (GLEW_OK != err)
 	{
 		/* Problem: glewInit failed, something is seriously wrong. */
@@ -75,7 +74,7 @@ int main(void)
 		constexpr float fov = 90.0f; // field of view in degrees
 		float near = 0.1f; // near clipping plane
 		float far = 100000.0f; // far clipping plane
-		glm::mat4 proj = MatrixTools::GetProjectionMatrix(width, height, fov, near, far);
+		glm::mat4 proj = MatrixTools::GetProjectionMatrix(windowWidth, windowHeight, fov, near, far);
 
 		Mesh object;
 		object.loadModel("res/models/texture coord test/texcoord test.obj"); // "res/models/bunny/bunny.obj"
@@ -131,9 +130,34 @@ int main(void)
 
 		std::vector<Mesh> objects;
 
+		double prevTime = 0.0;
+		double crntTime = 0.0;
+		double timeDiff;
+		unsigned int counter = 0;
+
+		double FPS = 0;
+		double MS = 0;
+
+		bool vSyncEnabled = true;
+		glfwSwapInterval(1);
+
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
+
+			// get the fps and put it in the window title
+			crntTime = glfwGetTime();
+			timeDiff = crntTime - prevTime;
+			counter++;
+			if (timeDiff >= 1.0 / 30.0) // get fps every third of a second
+			{
+				FPS = (1.0 / timeDiff) * counter; // get fps
+				MS = (timeDiff / counter) * 1000; // get milliseconds between frames
+				std::string newTitle = "opengl tower defense - FPS: " + std::to_string(FPS) + " MS: " + std::to_string(MS) + " -"; // make the string to use as a window title
+				glfwSetWindowTitle(window, newTitle.c_str()); // set the window title
+				prevTime = crntTime;
+				counter = 0;
+			}
 
 			/* Render here */
 			renderer.Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
@@ -154,49 +178,67 @@ int main(void)
 				renderer.Draw(objects[i], shader);
 
 
-			ImGui::Text("Environment");
-			ImGui::ColorEdit4("Background Color", &clearColor.r, ImGuiColorEditFlags_AlphaPreviewHalf | ImGuiColorEditFlags_AlphaBar);
+			if (ImGui::CollapsingHeader("Display"))
+			{
+				if (ImGui::Checkbox("Enable VSync", &vSyncEnabled))
+				{
+					// anything here is executed when the checkbox is clicked
+					glfwSwapInterval(vSyncEnabled);
+				}
+			}
 
-			ImGui::Text("Sliders");
-			ImGui::DragFloat("Movement Speed", &moveSpeed, 0.01f, 0.01f, 100.0f);	// Movement Speed
-			ImGui::DragFloat("Rotation Speed", &rotateSpeed, 0.01f, 0.01f, 10.0f);  // Rotation Speed
-			ImGui::DragFloat("Scale Speed", &scaleSpeed, 0.01f, 0.01f, 10.0f);		// Scale Speed
+			if (ImGui::CollapsingHeader("Environment"))
+			{
+				ImGui::ColorEdit4("Background Color", &clearColor.r, ImGuiColorEditFlags_AlphaPreviewHalf | ImGuiColorEditFlags_AlphaBar);
+			}
 
-			ImGui::Text("Camera");
-			ImGui::DragFloat3("Position", &translationA.x, moveSpeed);	// Camera Position
-			ImGui::DragFloat3("Rotation", &rotationA.x, rotateSpeed);	// Camera Rotation
-			ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
+			if (ImGui::CollapsingHeader("Sliders"))
+			{
+				ImGui::DragFloat("Movement Speed", &moveSpeed, 0.01f, 0.01f, 100.0f);	// Movement Speed
+				ImGui::DragFloat("Rotation Speed", &rotateSpeed, 0.01f, 0.01f, 10.0f);  // Rotation Speed
+				ImGui::DragFloat("Scale Speed", &scaleSpeed, 0.01f, 0.01f, 10.0f);		// Scale Speed
+			}
+
+			if (ImGui::CollapsingHeader("Camera"))
+			{
+				ImGui::DragFloat3("Position", &translationA.x, moveSpeed);	// Camera Position
+				ImGui::DragFloat3("Rotation", &rotationA.x, rotateSpeed);	// Camera Rotation
+				ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
+			}
 
 			if (ImGui::Button("New Object")) objects.push_back(object);  // New Object Button
 			if (ImGui::Button("100 New Objects")) for (int i = 0; i < 100; i++)
 				objects.push_back(object);  // 100 New Objects Button
-			for (int i = 0; i < objects.size(); i++)
+			if (ImGui::CollapsingHeader("Objects"))
 			{
-				std::string name = "Object " + std::to_string(i);
-				if (ImGui::CollapsingHeader(name.c_str()))
+				for (int i = 0; i < objects.size(); i++)
 				{
-					std::string positionName = "Position##Position" + std::to_string(i);
-					std::string rotationName = "Rotation##Rotation" + std::to_string(i);
-					std::string scaleName    = "Scale##Scale"       + std::to_string(i);
-					std::string texIDName    = "Texture##Texture"   + std::to_string(i);
-					std::string deleteName   = "Delete object##Del" + std::to_string(i);
+					std::string name = "Object " + std::to_string(i);
+					if (ImGui::CollapsingHeader(name.c_str()))
+					{
+						std::string positionName = "Position##Position" + std::to_string(i);
+						std::string rotationName = "Rotation##Rotation" + std::to_string(i);
+						std::string scaleName = "Scale##Scale" + std::to_string(i);
+						std::string texIDName = "Texture##Texture" + std::to_string(i);
+						std::string deleteName = "Delete object##Del" + std::to_string(i);
 
-					translationB = objects[i].GetTranslation();
-					rotationB = glm::eulerAngles(objects[i].GetRotation());
-					scaleB = objects[i].GetScale();
-					texID = objects[i].GetTextureID();
+						translationB = objects[i].GetTranslation();
+						rotationB = glm::eulerAngles(objects[i].GetRotation());
+						scaleB = objects[i].GetScale();
+						texID = objects[i].GetTextureID();
 
-					ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
-					ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
-					ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
-					ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());			// Object Texture ID
+						ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
+						ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
+						ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
+						ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());			// Object Texture ID
 
-					objects[i].SetPosition(translationB);
-					objects[i].SetRotation(rotationB);
-					objects[i].SetScale(scaleB);
-					objects[i].SetTextureID(texID);
-					objects[i].SetTexture(textures[texID-1]);
-					if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin()+i);  // Delete Object Button
+						objects[i].SetPosition(translationB);
+						objects[i].SetRotation(rotationB);
+						objects[i].SetScale(scaleB);
+						objects[i].SetTextureID(texID);
+						objects[i].SetTexture(textures[texID - 1]);
+						if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
+					}
 				}
 			}
 

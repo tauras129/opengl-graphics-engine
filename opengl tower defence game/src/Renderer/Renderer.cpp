@@ -114,3 +114,12 @@ void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum 
 	std::cout << std::endl;
 	__debugbreak();
 }
+
+void WindowResizeCallback(GLFWwindow* window, int width, int height)
+{
+	// Update the viewport with the new window size
+	glViewport(0, 0, width, height);
+
+	windowWidth = width;
+	windowHeight = height;
+}

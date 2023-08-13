@@ -122,4 +122,5 @@ void WindowResizeCallback(GLFWwindow* window, int width, int height)
 
 	windowWidth = width;
 	windowHeight = height;
+	// std::cout << "UPDATED" << std::endl;
 }

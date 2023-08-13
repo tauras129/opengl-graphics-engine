@@ -94,6 +94,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\vs code\projects\opengl tower defence game\dependencies\assimp-dependencies\include;D:\vs code\projects\opengl tower defence game\dependencies\WIN32\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,6 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\vs code\projects\opengl tower defence game\dependencies\assimp-dependencies\include;D:\vs code\projects\opengl tower defence game\dependencies\WIN32\include</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +133,7 @@
       <AdditionalIncludeDirectories>D:\vs code\projects\opengl tower defence game\dependencies\assimp-dependencies\include;D:\vs code\projects\opengl tower defence game\dependencies\WIN64\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,6 +154,7 @@
       <AdditionalIncludeDirectories>D:\vs code\projects\opengl tower defence game\dependencies\assimp-dependencies\include;D:\vs code\projects\opengl tower defence game\dependencies\WIN64\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,6 +189,8 @@
   <ItemGroup>
     <None Include="res\shaders\Basic.frag" />
     <None Include="res\shaders\Basic.vert" />
+    <None Include="res\shaders\Color.frag" />
+    <None Include="res\shaders\Color.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer\MatrixTools.h" />

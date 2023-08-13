@@ -19,8 +19,8 @@ bool GLLogCall(const char* function, const char* file, int line); //old error ha
 void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 void WindowResizeCallback(GLFWwindow * window, int width, int height);
 
-int windowWidth = 1080;
-int windowHeight = 720;
+inline int windowWidth = 1080;
+inline int windowHeight = 720;
 
 class Renderer
 {

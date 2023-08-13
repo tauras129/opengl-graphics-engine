@@ -80,6 +80,8 @@
     <None Include="res\shaders\Basic.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="res\shaders\Color.frag" />
+    <None Include="res\shaders\Color.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer\VertexBuffer.h">

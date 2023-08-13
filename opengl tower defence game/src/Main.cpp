@@ -82,7 +82,7 @@ int main(void)
 		Camera camera1;
 
 		Shader shader("res/shaders/Basic");
-		shader.Bind();
+		Shader setColor("res/shaders/Color");
 
 		std::vector<Texture> textures;
 		textures.push_back(Texture("res/textures/prototype.png"));
@@ -95,9 +95,6 @@ int main(void)
 		textures.push_back(Texture("res/models/tiger/texture.png"));
 		textures.push_back(Texture("res/models/tiger/texture-white.png"));
 		textures.push_back(Texture("res/models/texture coord test/texcoord test.png"));
-
-
-		shader.Unbind();
 
 		Renderer renderer;
 
@@ -139,6 +136,8 @@ int main(void)
 		double MS = 0;
 
 		bool vSyncEnabled = true;
+		bool wireframeEnabled = false;
+		glm::vec4 wireframeColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glfwSwapInterval(1);
 
 		/* Loop until the user closes the window */
@@ -149,7 +148,7 @@ int main(void)
 			crntTime = glfwGetTime();
 			timeDiff = crntTime - prevTime;
 			counter++;
-			if (timeDiff >= 1.0 / 30.0) // get fps every third of a second
+			if (timeDiff >= 1.0 / 30.0) // run every third of a second
 			{
 				FPS = (1.0 / timeDiff) * counter; // get fps
 				MS = (timeDiff / counter) * 1000; // get milliseconds between frames
@@ -157,7 +156,13 @@ int main(void)
 				glfwSetWindowTitle(window, newTitle.c_str()); // set the window title
 				prevTime = crntTime;
 				counter = 0;
+
+				// Recalculate the projection matrix TODO: make it not do this every 3 frames
+				proj = MatrixTools::GetProjectionMatrix(windowWidth, windowHeight, fov, near, far);
+
+				// std::cout << windowHeight << std::endl;
 			}
+
 
 			/* Render here */
 			renderer.Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
@@ -170,13 +175,23 @@ int main(void)
 			camera1.SetPosition(translationA);
 			camera1.SetRotation(rotationA);
 			camera1.SetScale(scaleA);
+
 			shader.Bind();
 			shader.SetUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
 			shader.SetUniformMat4f("u_Proj", proj);						// give shader the projection matrix
 
-			for (int i = 0; i < objects.size(); i++)
-				renderer.Draw(objects[i], shader);
+			setColor.Bind();
+			setColor.SetUniformMat4f("u_View", camera1.GetViewMatrix());// give shader the view matrix
+			setColor.SetUniformMat4f("u_Proj", proj);					// give shader the projection matrix
+			setColor.SetUniform4f("u_ColorIn", wireframeColor.r, wireframeColor.g, wireframeColor.b, wireframeColor.a); // give shader the color of the wireframe
 
+			for (int i = 0; i < objects.size(); i++)
+			{
+				if (wireframeEnabled)
+					renderer.Draw(objects[i], setColor);
+
+				else renderer.Draw(objects[i], shader);
+			}
 
 			if (ImGui::CollapsingHeader("Display"))
 			{
@@ -184,6 +199,24 @@ int main(void)
 				{
 					// anything here is executed when the checkbox is clicked
 					glfwSwapInterval(vSyncEnabled);
+				}
+
+				if (ImGui::Checkbox("Wireframe", &wireframeEnabled))
+				{
+					// anything here is executed when the checkbox is clicked
+					if (wireframeEnabled)
+					{
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					}
+					else
+					{
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					}
+				}
+
+				if (wireframeEnabled)
+				{
+					ImGui::ColorEdit4("Wireframe Color", &wireframeColor.r, ImGuiColorEditFlags_AlphaPreviewHalf | ImGuiColorEditFlags_AlphaBar);
 				}
 			}
 

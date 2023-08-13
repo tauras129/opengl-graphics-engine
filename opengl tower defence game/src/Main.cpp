@@ -77,24 +77,27 @@ int main(void)
 		glm::mat4 proj = MatrixTools::GetProjectionMatrix(windowWidth, windowHeight, fov, near, far);
 
 		Mesh object;
-		object.loadModel("res/models/texture coord test/texcoord test.obj"); // "res/models/bunny/bunny.obj"
+		object.loadModel("res/models/cube.obj"); // "res/models/bunny/bunny.obj"
 
 		Camera camera1;
 
 		Shader shader("res/shaders/Basic");
+		Shader litObject("res/shaders/Light");
 		Shader setColor("res/shaders/Color");
 
 		std::vector<Texture> textures;
-		textures.push_back(Texture("res/textures/prototype.png"));
-		textures.push_back(Texture("res/textures/prototype1.png"));
-		textures.push_back(Texture("res/models/bunny/texture_standard.jpg"));
-		textures.push_back(Texture("res/models/bunny/texture_ceramic.jpg"));
-		textures.push_back(Texture("res/models/dog/texture.png"));
-		textures.push_back(Texture("res/models/spooky thing/texture.png"));
-		textures.push_back(Texture("res/models/spooky thing/normal.png"));
-		textures.push_back(Texture("res/models/tiger/texture.png"));
-		textures.push_back(Texture("res/models/tiger/texture-white.png"));
-		textures.push_back(Texture("res/models/texture coord test/texcoord test.png"));
+		textures.emplace_back(Texture("res/textures/prototype.png"));
+		textures.emplace_back(Texture("res/textures/prototype1.png"));
+		textures.emplace_back(Texture("res/models/bunny/texture_standard.jpg"));
+		textures.emplace_back(Texture("res/models/bunny/texture_ceramic.jpg"));
+		textures.emplace_back(Texture("res/models/dog/texture.png"));
+		textures.emplace_back(Texture("res/models/spooky thing/texture.png"));
+		textures.emplace_back(Texture("res/models/spooky thing/normal.png"));
+		textures.emplace_back(Texture("res/models/tiger/texture.png"));
+		textures.emplace_back(Texture("res/models/tiger/texture-white.png"));
+		textures.emplace_back(Texture("res/models/texture coord test/texcoord test.png"));
+		textures.emplace_back(Texture("res/textures/crateDiffuse.png"));
+		textures.emplace_back(Texture("res/textures/crateSpecular.png"));
 
 		Renderer renderer;
 
@@ -119,6 +122,7 @@ int main(void)
 		glm::vec4 clearColor(0.2f, 0.3f, 0.8f, 1.0f);
 
 		int texID = 0;
+		int specularTexID = 0;
 		float moveSpeed = 1.0f;
 		float rotateSpeed = 0.1f;
 		float scaleSpeed = 0.25f;
@@ -126,6 +130,7 @@ int main(void)
 		bool pOpen = true;
 
 		std::vector<Mesh> objects;
+		std::vector<unsigned int> specularTextureIDS;
 
 		double prevTime = 0.0;
 		double crntTime = 0.0;
@@ -139,6 +144,8 @@ int main(void)
 		bool wireframeEnabled = false;
 		glm::vec4 wireframeColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glfwSwapInterval(1);
+
+		Light light;
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -180,6 +187,17 @@ int main(void)
 			shader.SetUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
 			shader.SetUniformMat4f("u_Proj", proj);						// give shader the projection matrix
 
+			litObject.Bind();
+			litObject.SetUniformMat4f("u_View", camera1.GetViewMatrix());	// give shader the view matrix
+			litObject.SetUniformMat4f("u_Proj", proj);						// give shader the projection matrix
+			litObject.SetUniform3f("u_ViewPos", camera1.GetPosition().x, camera1.GetPosition().y, camera1.GetPosition().z);
+			//litObject.SetUniform3f("u_Material.specular", 0.633f, 0.727811f, 0.633f);
+			litObject.SetUniform1f("u_Material.shininess", 76.8f); // the current material is emerald (http://devernay.free.fr/cours/opengl/materials.html)
+			litObject.SetUniform3f("u_Light.position", light.lightPosition.x, light.lightPosition.y, light.lightPosition.z);
+			litObject.SetUniform3f("u_Light.ambient", 0.2f, 0.2f, 0.2f);
+			litObject.SetUniform3f("u_Light.diffuse", 0.5f, 0.5f, 0.5f);
+			litObject.SetUniform3f("u_Light.specular", 1.0f, 1.0f, 1.0f);
+
 			setColor.Bind();
 			setColor.SetUniformMat4f("u_View", camera1.GetViewMatrix());// give shader the view matrix
 			setColor.SetUniformMat4f("u_Proj", proj);					// give shader the projection matrix
@@ -190,8 +208,10 @@ int main(void)
 				if (wireframeEnabled)
 					renderer.Draw(objects[i], setColor);
 
-				else renderer.Draw(objects[i], shader);
+				else renderer.Draw(objects[i], litObject);
 			}
+
+			renderer.Draw(light, proj, camera1.GetViewMatrix());
 
 			if (ImGui::CollapsingHeader("Display"))
 			{
@@ -239,9 +259,16 @@ int main(void)
 				ImGui::DragFloat3("Scale(broken)", &scaleA.x, scaleSpeed);	// Camera Scale
 			}
 
-			if (ImGui::Button("New Object")) objects.push_back(object);  // New Object Button
+			if (ImGui::Button("New Object"))
+			{
+				objects.push_back(object);  // New Object Button
+				specularTextureIDS.push_back(11);
+			}
 			if (ImGui::Button("100 New Objects")) for (int i = 0; i < 100; i++)
+			{
 				objects.push_back(object);  // 100 New Objects Button
+				specularTextureIDS.push_back(11);
+			}
 			if (ImGui::CollapsingHeader("Objects"))
 			{
 				for (int i = 0; i < objects.size(); i++)
@@ -253,23 +280,28 @@ int main(void)
 						std::string rotationName = "Rotation##Rotation" + std::to_string(i);
 						std::string scaleName = "Scale##Scale" + std::to_string(i);
 						std::string texIDName = "Texture##Texture" + std::to_string(i);
+						std::string specularTexIDName = "Specular Texture##TextureSpecular" + std::to_string(i);
 						std::string deleteName = "Delete object##Del" + std::to_string(i);
 
 						translationB = objects[i].GetTranslation();
 						rotationB = glm::eulerAngles(objects[i].GetRotation());
 						scaleB = objects[i].GetScale();
 						texID = objects[i].GetTextureID();
+						specularTexID = specularTextureIDS[i];
 
-						ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);		// Object Position
-						ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);			// Object Rotation
-						ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);				// Object Scale
-						ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());			// Object Texture ID
+						ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);			 // Object Position
+						ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);				 // Object Rotation
+						ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);					 // Object Scale
+						ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());				 // Object Texture ID
+						ImGui::SliderInt(specularTexIDName.c_str(), &specularTexID, 1, textures.size()); // Object Texture ID
 
 						objects[i].SetPosition(translationB);
 						objects[i].SetRotation(rotationB);
 						objects[i].SetScale(scaleB);
 						objects[i].SetTextureID(texID);
 						objects[i].SetTexture(textures[texID - 1]);
+						specularTextureIDS[i] = specularTexID;
+						objects[i].SetSpecularTexture(textures[specularTexID - 1]);
 						if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
 					}
 				}

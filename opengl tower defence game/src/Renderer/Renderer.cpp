@@ -57,19 +57,38 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 	ib.Unbind();
 }
 
-void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/, bool setTexture /*= true*/)
-// You do not need to set the shaders model matrix or texture, this function sets that(unless you change the parameter also setting the texture binds texture slot 0 to the meshes texture).
+void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/, bool setTexture /*= true*/, bool setSpecularTexture /*= true*/, std::string textureName /*= "u_Material.diffuse"*/, std::string specularTextureName /*= "u_Material.specular"*/)
+// You do not need to set the shaders, model matrix or texture, this function sets that(unless you change the parameter also setting the texture binds texture slot 0 to the meshes texture).
 // You do still need to set the view and projection matrices.
 {
 
 	shader.Bind();
 	mesh.va.Bind();
 	mesh.ib.Bind();
-	mesh.GetTexture().Bind();
+	if (setTexture) mesh.GetTexture().Bind(0U);
+	if (setSpecularTexture) mesh.GetSpecularTexture().Bind(1U);
 
 	if(setModelMatrix) shader.SetUniformMat4f("u_Model", mesh.GetModelMatrix()); // give shader the model matrix
-	if (setTexture) shader.SetUniform1i("u_Texture", 0); // give shader the models texture
+	if (setTexture) shader.SetUniform1i(textureName, 0); // give shader the models texture
+	if (setSpecularTexture) shader.SetUniform1i(specularTextureName, 1); // give shader the models specular texture
 	glDrawElements(GL_TRIANGLES, mesh.ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+
+}
+
+void Renderer::Draw(Light& light, const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix)
+// Render a light and a cube to show where the light is
+{
+
+	light.va.Bind();
+	light.ib.Bind();
+
+	light.lightCubeShader.SetUniformMat4f("u_Model", light.GetModelMatrix()); // give shader the model matrix
+	light.lightCubeShader.SetUniformMat4f("u_View", viewMatrix);			  // give shader the view matrix
+	light.lightCubeShader.SetUniformMat4f("u_Proj", projectionMatrix);		  // give shader the projection matrix
+
+	light.lightCubeShader.Bind();
+
+	glDrawElements(GL_TRIANGLES, light.ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 
 }
 

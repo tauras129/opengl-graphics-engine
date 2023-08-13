@@ -8,6 +8,7 @@
 #include <array>
 #include "Shader.h"
 #include <GLFW/glfw3.h>
+#include "Light.h"
 
 #define ASSERT(x) if (!(x)) __debugbreak();
 #define GLCall(x) x;\
@@ -28,7 +29,8 @@ public:
 	void Clear() const;
 	void Clear(float red, float green, float blue, float alpha) const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
-	void Draw(Mesh& mesh, Shader& shader, bool setModelMatrix = true, bool setTexture = true);
+	void Draw(Mesh& mesh, Shader& shader, bool setModelMatrix = true, bool setTexture = true, bool setSpecularTexture = true, std::string textureName = "u_Material.diffuse", std::string specularTextureName = "u_Material.specular");
+	void Draw(Light& light, const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix);
 	void InitOpenGL();
 
 private:

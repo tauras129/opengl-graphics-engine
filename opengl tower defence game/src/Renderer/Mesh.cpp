@@ -18,12 +18,19 @@ Mesh::Mesh()
 
 	updateModelMatrix();
 	texture = GetDefaultTexture();
+	specularTexture = GetDefaultSpecularTexture();
 }
 
 Texture& Mesh::GetDefaultTexture()
 {
 	static Texture defaultTexture("res/textures/prototype.png");
 	return defaultTexture;
+}
+
+Texture& Mesh::GetDefaultSpecularTexture()
+{
+	static Texture defaultSpecularTexture("res/textures/crateSpecular.png");
+	return defaultSpecularTexture;
 }
 
 Mesh::~Mesh()

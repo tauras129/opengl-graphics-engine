@@ -39,6 +39,7 @@ public:
 	int GetTextureID() const { return texID; }
 	glm::mat4 GetModelMatrix() const { return modelMatrix; }
 	Texture& GetTexture() { return texture; }
+	Texture& GetSpecularTexture() { return specularTexture; }
 
 	void GlobalMove(glm::vec3 translation);
 	void LocalMove(glm::vec3 translation);
@@ -51,7 +52,9 @@ public:
 	void AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void SetTextureID(int id);
 	void SetTexture(const Texture& newTexture) { texture = newTexture; }
+	void SetSpecularTexture(const Texture& newSpecularTexture) { specularTexture = newSpecularTexture; }
 	void ResetTexture() { texture = GetDefaultTexture(); }
+	void ResetSpecularTexture() { specularTexture = GetDefaultSpecularTexture(); }
 
 	Mesh(const Mesh &other)
 	{
@@ -64,6 +67,7 @@ public:
 		texID = other.texID;
 		layout = other.layout;
 		texture = other.texture;
+		specularTexture = other.specularTexture;
 		vb.Set(vertices.data(), (unsigned int)(sizeof(vertices[0]) * vertices.size()));
 		va.AddBuffer(vb, layout);
 		ib.Set(indices, (unsigned int)indices.size());
@@ -80,7 +84,9 @@ private:
 	glm::vec3 scale = glm::vec3(1);
 	int texID = 1;
 	static Texture& GetDefaultTexture();
+	static Texture& GetDefaultSpecularTexture();
 	Texture texture;
+	Texture specularTexture;
 
 	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);

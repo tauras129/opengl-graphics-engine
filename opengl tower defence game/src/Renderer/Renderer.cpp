@@ -76,7 +76,7 @@ void Renderer::Draw(Mesh& mesh, Shader& shader, bool setModelMatrix /*= true*/, 
 }
 
 void Renderer::Draw(Light& light, const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix)
-// Render a light and a cube to show where the light is
+// Render a cube to show where the light is
 {
 
 	light.va.Bind();

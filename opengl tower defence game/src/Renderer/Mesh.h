@@ -40,19 +40,21 @@ public:
 	glm::mat4 GetModelMatrix() const { return modelMatrix; }
 	Texture& GetTexture() { return texture; }
 	Texture& GetSpecularTexture() { return specularTexture; }
+	float GetShininess() { return shininess; }
 
 	void GlobalMove(glm::vec3 translation);
 	void LocalMove(glm::vec3 translation);
 	void Rotate(glm::quat rotation);
 	void Scale(glm::vec3 scale);
 
-	void SetPosition(glm::vec3 translation);
+	void SetTranslation(glm::vec3 translation);
 	void SetRotation(glm::quat rotation);
 	void SetScale(glm::vec3 scale);
 	void AppendToVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void SetTextureID(int id);
 	void SetTexture(const Texture& newTexture) { texture = newTexture; }
 	void SetSpecularTexture(const Texture& newSpecularTexture) { specularTexture = newSpecularTexture; }
+	void SetShininess(float newShininess) { shininess = newShininess; }
 	void ResetTexture() { texture = GetDefaultTexture(); }
 	void ResetSpecularTexture() { specularTexture = GetDefaultSpecularTexture(); }
 
@@ -87,6 +89,7 @@ private:
 	static Texture& GetDefaultSpecularTexture();
 	Texture texture;
 	Texture specularTexture;
+	float shininess = 76.8f; // emerald (http://devernay.free.fr/cours/opengl/materials.html)
 
 	void processNode(const aiNode* node, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 	void processMesh(const aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);

@@ -35,12 +35,12 @@ Texture& Mesh::GetDefaultSpecularTexture()
 
 Mesh::~Mesh()
 {
-	va.Unbind();
-	va.~VertexArray();
-	vb.Unbind();
-	vb.~VertexBuffer();
-	ib.Unbind();
-	ib.~IndexBuffer();
+	//va.Unbind();
+	//va.~VertexArray();
+	//vb.Unbind();
+	//vb.~VertexBuffer();
+	//ib.Unbind();
+	//ib.~IndexBuffer();
 }
 
 void Mesh::loadModel(const std::string& path)
@@ -211,7 +211,7 @@ void Mesh::Scale(glm::vec3 scale)
 	updateModelMatrix();
 }
 
-void Mesh::SetPosition(glm::vec3 translation)
+void Mesh::SetTranslation(glm::vec3 translation)
 {
 	this->translation = translation;
 	updateModelMatrix();

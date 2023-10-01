@@ -9,10 +9,10 @@ public:
 	~Camera();
 
 	//glm::mat4 GetModelMatrix();
-	glm::mat4 GetViewMatrix();
+	glm::mat4 GetViewMatrix() const;
 	//glm::mat4 GetProjectionMatrix();
-	glm::vec3 GetPosition();
-	glm::quat GetRotation();
+	glm::vec3 GetPosition() const;
+	glm::quat GetRotation() const;
 
 	void GlobalMove(glm::vec3 translation);
 	void LocalMove(glm::vec3 translation);

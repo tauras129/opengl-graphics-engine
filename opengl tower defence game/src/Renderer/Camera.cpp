@@ -27,15 +27,15 @@ Camera::~Camera()
 
 }
 
-glm::mat4 Camera::GetViewMatrix()
+glm::mat4 Camera::GetViewMatrix() const
 {
 	return view;
 }
-glm::vec3 Camera::GetPosition()
+glm::vec3 Camera::GetPosition() const
 {
 	return translation;
 }
-glm::quat Camera::GetRotation()
+glm::quat Camera::GetRotation() const
 {
 	return rotation;
 }

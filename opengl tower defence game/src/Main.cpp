@@ -187,16 +187,7 @@ int main(void)
 			shader.SetUniformMat4f("u_View", camera1.GetViewMatrix());  // give shader the view matrix
 			shader.SetUniformMat4f("u_Proj", proj);						// give shader the projection matrix
 
-			litObject.Bind();
-			litObject.SetUniformMat4f("u_View", camera1.GetViewMatrix());	// give shader the view matrix
-			litObject.SetUniformMat4f("u_Proj", proj);						// give shader the projection matrix
-			litObject.SetUniform3f("u_ViewPos", camera1.GetPosition().x, camera1.GetPosition().y, camera1.GetPosition().z);
-			//litObject.SetUniform3f("u_Material.specular", 0.633f, 0.727811f, 0.633f);
-			litObject.SetUniform1f("u_Material.shininess", 76.8f); // the current material is emerald (http://devernay.free.fr/cours/opengl/materials.html)
-			litObject.SetUniform3f("u_Light.position", light.lightPosition.x, light.lightPosition.y, light.lightPosition.z);
-			litObject.SetUniform3f("u_Light.ambient", 0.2f, 0.2f, 0.2f);
-			litObject.SetUniform3f("u_Light.diffuse", 0.5f, 0.5f, 0.5f);
-			litObject.SetUniform3f("u_Light.specular", 1.0f, 1.0f, 1.0f);
+			light.SetValues(litObject, camera1, proj);
 
 			setColor.Bind();
 			setColor.SetUniformMat4f("u_View", camera1.GetViewMatrix());// give shader the view matrix
@@ -252,6 +243,51 @@ int main(void)
 				ImGui::DragFloat("Scale Speed", &scaleSpeed, 0.01f, 0.01f, 10.0f);		// Scale Speed
 			}
 
+			if (ImGui::CollapsingHeader("Lighting"))
+			{
+				if (ImGui::CollapsingHeader("Parameters"))
+				{
+					glm::vec3 position = light.GetTranslation();
+					glm::quat rotation = light.GetRotation();
+					glm::vec3 scale = light.GetScale();
+
+					glm::vec3 ambient = light.GetProperties().ambient;
+					glm::vec3 diffuse = light.GetProperties().diffuse;
+					glm::vec3 specular = light.GetProperties().specular;
+
+					float constant = light.GetProperties().constant;
+					float linear = light.GetProperties().linear;
+					float quadratic = light.GetProperties().quadratic;
+
+					ImGui::DragFloat3("Light Position", &position.x, moveSpeed);
+					ImGui::DragFloat3("Light Rotation", &rotation.x, rotateSpeed);
+					ImGui::DragFloat3("Light Scale(doesn't affect brightness)", &scale.x, scaleSpeed);
+
+					ImGui::DragFloat3("Light Ambient", &ambient.r);
+					ImGui::DragFloat3("Light Diffuse", &diffuse.r);
+					ImGui::DragFloat3("Light Specular", &specular.r);
+
+					ImGui::DragFloat("Light Attenuation Constant(KEEP AT 1)", &constant);
+					ImGui::DragFloat("Light Attenuation Linear", &linear);
+					ImGui::DragFloat("Light Attenuation Quadratic", &quadratic);
+
+					light.SetTranslation(position);
+					light.SetRotation(rotation);
+					light.SetScale(scale);
+
+					light.SetAmbient(ambient);
+					light.SetDiffuse(diffuse);
+					light.SetSpecular(specular);
+
+					light.SetConstant(constant);
+					light.SetLinear(linear);
+					light.SetQuadratic(quadratic);
+
+					if (ImGui::Button("Click to copy link to light values to clipboard")) ImGui::SetClipboardText("http://devernay.free.fr/cours/opengl/materials.html");
+					if (ImGui::Button("Click to copy link to attenuation values to clipboard")) ImGui::SetClipboardText("http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation");
+				}
+			}
+
 			if (ImGui::CollapsingHeader("Camera"))
 			{
 				ImGui::DragFloat3("Position", &translationA.x, moveSpeed);	// Camera Position
@@ -281,6 +317,7 @@ int main(void)
 						std::string scaleName = "Scale##Scale" + std::to_string(i);
 						std::string texIDName = "Texture##Texture" + std::to_string(i);
 						std::string specularTexIDName = "Specular Texture##TextureSpecular" + std::to_string(i);
+						std::string shininessName = "Shininess##Shininess" + std::to_string(i);
 						std::string deleteName = "Delete object##Del" + std::to_string(i);
 
 						translationB = objects[i].GetTranslation();
@@ -288,20 +325,23 @@ int main(void)
 						scaleB = objects[i].GetScale();
 						texID = objects[i].GetTextureID();
 						specularTexID = specularTextureIDS[i];
+						float shininess = objects[i].GetShininess();
 
 						ImGui::DragFloat3(positionName.c_str(), &translationB.x, moveSpeed);			 // Object Position
 						ImGui::DragFloat3(rotationName.c_str(), &rotationB.x, rotateSpeed);				 // Object Rotation
 						ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);					 // Object Scale
 						ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());				 // Object Texture ID
 						ImGui::SliderInt(specularTexIDName.c_str(), &specularTexID, 1, textures.size()); // Object Texture ID
+						ImGui::DragFloat(shininessName.c_str(), &shininess, 0.1f);
 
-						objects[i].SetPosition(translationB);
+						objects[i].SetTranslation(translationB);
 						objects[i].SetRotation(rotationB);
 						objects[i].SetScale(scaleB);
 						objects[i].SetTextureID(texID);
 						objects[i].SetTexture(textures[texID - 1]);
 						specularTextureIDS[i] = specularTexID;
 						objects[i].SetSpecularTexture(textures[specularTexID - 1]);
+						objects[i].SetShininess(shininess);
 						if (ImGui::Button(deleteName.c_str())) objects.erase(objects.begin() + i);  // Delete Object Button
 					}
 				}

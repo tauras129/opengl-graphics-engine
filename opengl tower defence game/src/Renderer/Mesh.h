@@ -84,7 +84,7 @@ private:
 	glm::vec3 translation = glm::vec3(0);
 	glm::quat rotation = glm::quat(glm::vec3(0));
 	glm::vec3 scale = glm::vec3(1);
-	int texID = 1;
+	int texID = 11;
 	static Texture& GetDefaultTexture();
 	static Texture& GetDefaultSpecularTexture();
 	Texture texture;

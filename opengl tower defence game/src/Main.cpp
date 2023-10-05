@@ -298,12 +298,12 @@ int main(void)
 			if (ImGui::Button("New Object"))
 			{
 				objects.push_back(object);  // New Object Button
-				specularTextureIDS.push_back(11);
+				specularTextureIDS.push_back(12);
 			}
 			if (ImGui::Button("100 New Objects")) for (int i = 0; i < 100; i++)
 			{
 				objects.push_back(object);  // 100 New Objects Button
-				specularTextureIDS.push_back(11);
+				specularTextureIDS.push_back(12);
 			}
 			if (ImGui::CollapsingHeader("Objects"))
 			{
@@ -332,7 +332,7 @@ int main(void)
 						ImGui::DragFloat3(scaleName.c_str(), &scaleB.x, scaleSpeed);					 // Object Scale
 						ImGui::SliderInt(texIDName.c_str(), &texID, 1, textures.size());				 // Object Texture ID
 						ImGui::SliderInt(specularTexIDName.c_str(), &specularTexID, 1, textures.size()); // Object Texture ID
-						ImGui::DragFloat(shininessName.c_str(), &shininess, 0.1f);
+						ImGui::DragFloat(shininessName.c_str(), &shininess, 0.1f, 0.00001f);
 
 						objects[i].SetTranslation(translationB);
 						objects[i].SetRotation(rotationB);

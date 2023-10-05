@@ -73,6 +73,10 @@ Light::~Light()
 
 void Light::SetValues(Shader& shader) const
 {
+    shader.SetUniform1f("u_Light.constant", GetProperties().constant);
+    shader.SetUniform1f("u_Light.linear", GetProperties().linear);
+    shader.SetUniform1f("u_Light.quadratic", GetProperties().quadratic);
+
     shader.SetUniform3f("u_Light.position", GetTranslation().x, GetTranslation().y, GetTranslation().z);
     shader.SetUniform3f("u_Light.ambient", GetProperties().ambient.x, GetProperties().ambient.y, GetProperties().ambient.z);
     shader.SetUniform3f("u_Light.diffuse", GetProperties().diffuse.x, GetProperties().diffuse.y, GetProperties().diffuse.z);
@@ -82,6 +86,10 @@ void Light::SetValues(Shader& shader) const
 
 void Light::SetValues(Shader& shader, const Camera& camera) const
 {
+    shader.SetUniform1f("u_Light.constant", GetProperties().constant);
+    shader.SetUniform1f("u_Light.linear", GetProperties().linear);
+    shader.SetUniform1f("u_Light.quadratic", GetProperties().quadratic);
+
     shader.SetUniform3f("u_Light.position", GetTranslation().x, GetTranslation().y, GetTranslation().z);
     shader.SetUniform3f("u_Light.ambient", GetProperties().ambient.x, GetProperties().ambient.y, GetProperties().ambient.z);
     shader.SetUniform3f("u_Light.diffuse", GetProperties().diffuse.x, GetProperties().diffuse.y, GetProperties().diffuse.z);
@@ -94,6 +102,10 @@ void Light::SetValues(Shader& shader, const Camera& camera) const
 
 void Light::SetValues(Shader& shader, const glm::mat4& projectionMatrix) const
 {
+    shader.SetUniform1f("u_Light.constant", GetProperties().constant);
+    shader.SetUniform1f("u_Light.linear", GetProperties().linear);
+    shader.SetUniform1f("u_Light.quadratic", GetProperties().quadratic);
+
     shader.SetUniform3f("u_Light.position", GetTranslation().x, GetTranslation().y, GetTranslation().z);
     shader.SetUniform3f("u_Light.ambient", GetProperties().ambient.x, GetProperties().ambient.y, GetProperties().ambient.z);
     shader.SetUniform3f("u_Light.diffuse", GetProperties().diffuse.x, GetProperties().diffuse.y, GetProperties().diffuse.z);
@@ -105,6 +117,10 @@ void Light::SetValues(Shader& shader, const glm::mat4& projectionMatrix) const
 
 void Light::SetValues(Shader& shader, const Camera& camera, const glm::mat4& projectionMatrix) const
 {
+    shader.SetUniform1f("u_Light.constant", GetProperties().constant);
+    shader.SetUniform1f("u_Light.linear", GetProperties().linear);
+    shader.SetUniform1f("u_Light.quadratic", GetProperties().quadratic);
+
     shader.SetUniform3f("u_Light.position", GetTranslation().x, GetTranslation().y, GetTranslation().z);
     shader.SetUniform3f("u_Light.ambient", GetProperties().ambient.x, GetProperties().ambient.y, GetProperties().ambient.z);
     shader.SetUniform3f("u_Light.diffuse", GetProperties().diffuse.x, GetProperties().diffuse.y, GetProperties().diffuse.z);
